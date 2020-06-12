@@ -5,7 +5,7 @@ CFLAGS = -Werror -g -std=c99 -pedantic
 
 all: battery
 
-battery: battery.c
+battery: battery.c curl.c curl.h -lcurl
 
 clean:
 	rm -f *.o battery

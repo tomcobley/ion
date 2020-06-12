@@ -1,0 +1,7 @@
+ 
+Time: Fri Jun 12 17:23:21 2020
+ , State: discharging, Percentage: 97
+Time: Fri Jun 12 17:24:18 2020
+ , State: charging, Percentage: 96
+Time: Fri Jun 12 17:25:04 2020
+ , State: charging, Percentage: 96
