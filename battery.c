@@ -73,7 +73,7 @@ static void log_battery_info(battery_t *battery){
   time(&rawtime);
   timeinfo = localtime(&rawtime);
   
-  fprintf(log_file, "Time: %s , State: %s, Percentage: %d\n", asctime(timeinfo) , state_string, battery->percentage);
+  fprintf(log_file, "State: %s, Percentage: %d, Time: %s", state_string, battery->percentage, asctime(timeinfo));
 
   if(fclose(log_file) != 0){
     perror("Failed to close battery information file");
@@ -83,10 +83,10 @@ static void log_battery_info(battery_t *battery){
 }
 
 static void monitor_battery(battery_t *battery) {
-  if (battery->percentage <= CYCLE_LOWER_BOUND) {
+  if (battery->percentage <= CYCLE_LOWER_BOUND && battery->state != CHARGING) {
     printf("Current battery level too low, switching plug on.\n");
     post_to_webhook(POWER_ON);
-  } else if(battery->percentage >= CYCLE_UPPER_BOUND) {
+  } else if(battery->percentage >= CYCLE_UPPER_BOUND && battery->state != DISCHARGING) {
     printf("Current battery level too high, switching plug off\n");
     post_to_webhook(POWER_OFF);
   }
