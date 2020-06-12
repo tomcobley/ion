@@ -18,8 +18,10 @@ void post_to_webhook(char* dest_url){
     curl_easy_setopt(curl, CURLOPT_URL, dest_url);
 
     // perform request
+    printf("Performing request. Output:\n    ");
     res_code = curl_easy_perform(curl);
-
+    printf("\n");
+    
     // checks for errors
     if(res_code != CURLE_OK)
       fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res_code));

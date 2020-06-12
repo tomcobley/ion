@@ -153,8 +153,6 @@ int main(void) {
   
   monitor_battery(battery);
 
-  printf("Percentage: %d, State: %d\n", battery->percentage, battery->state);
-
   free(battery);
 
   if (system(DELETE_TEMP_CONTENTS) != SYSTEM_SUCCESS) {
