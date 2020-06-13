@@ -3,29 +3,11 @@
 #include <stdlib.h>
 #include "curl.h"
 #include "time.h"
+#include "sys.h"
 
-#define SYSTEM_SUCCESS (0)
-#define MAX_LINE_SIZE (1024)
-#define CYCLE_LOWER_BOUND (30)
-#define CYCLE_UPPER_BOUND (80)
-#define BATTERY_INFO ("upower -i `upower -e | grep 'BAT'` | egrep 'state|percentage' > ./temp/batteryinfo.txt")
-#define DELETE_TEMP_CONTENTS ("cd ./temp && rm -rf *")
-#define BATTERY_INFO_PATH ("./temp/batteryinfo.txt")
-#define BATTERY_LOG_PATH ("./log/batterylog.txt")
-#define POWER_ON ("https://maker.ifttt.com/trigger/charge_low/with/key/dMgkSNQqbJM-9NI1ySrKdb")
-#define POWER_OFF ("https://maker.ifttt.com/trigger/charge_high/with/key/dMgkSNQqbJM-9NI1ySrKdb")
 
-typedef enum state {
-  CHARGING,
-  DISCHARGING
-} state_t;
 
-typedef struct battery {
-  int percentage;
-  state_t state;
-} battery_t;
-
-static battery_t *new_battery(void){
+static battery_t *alloc_battery(void){
   battery_t *battery = calloc(1, sizeof(battery_t));
   if(battery == NULL){
     perror("Failed to allocate memory for battery");
@@ -44,7 +26,7 @@ static void state_to_string(state_t state, char *string){
     perror("Unable to convert state to string");
     exit(EXIT_FAILURE);
   }
-    
+
 }
 
 static void init_battery(battery_t *battery, char *status, int percentage){
@@ -62,24 +44,24 @@ static void init_battery(battery_t *battery, char *status, int percentage){
 static void log_battery_info(battery_t *battery){
   FILE *log_file = fopen(BATTERY_LOG_PATH, "a");
   if(log_file == NULL){
-    perror("Failed to open battery log file");
+    perror("Failed to open battery logfile");
     exit(EXIT_FAILURE);
   }
   char state_string[MAX_LINE_SIZE];
   state_to_string(battery->state, state_string);
-  
+
   time_t rawtime;
   struct tm * timeinfo;
   time(&rawtime);
   timeinfo = localtime(&rawtime);
-  
+
   fprintf(log_file, "State: %s, Percentage: %d, Time: %s", state_string, battery->percentage, asctime(timeinfo));
 
   if(fclose(log_file) != 0){
     perror("Failed to close battery information file");
     exit(EXIT_FAILURE);
   }
-  
+
 }
 
 static void monitor_battery(battery_t *battery) {
@@ -90,7 +72,7 @@ static void monitor_battery(battery_t *battery) {
     printf("Current battery level too high, switching plug off\n");
     post_to_webhook(POWER_OFF);
   }
-  
+
 }
 
 static char *skipWhiteSpace(char *str) {
@@ -135,7 +117,7 @@ static void read_battery_info(battery_t *battery) {
 
   init_battery(battery, status, percentage);
 
-  
+
   if(fclose(batteryinfo) != 0){
     perror("Failed to close battery information file");
     exit(EXIT_FAILURE);
@@ -145,12 +127,12 @@ static void read_battery_info(battery_t *battery) {
 
 int main(void) {
 
-  battery_t *battery = new_battery();
+  battery_t *battery = alloc_battery();
 
   read_battery_info(battery);
 
   log_battery_info(battery);
-  
+
   monitor_battery(battery);
 
   free(battery);
@@ -158,6 +140,6 @@ int main(void) {
   if (system(DELETE_TEMP_CONTENTS) != SYSTEM_SUCCESS) {
     perror("Failed to delete contents of temp");
   }
-  
+
   return EXIT_SUCCESS;
 }
