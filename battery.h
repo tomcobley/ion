@@ -4,8 +4,10 @@
 #define CYCLE_LOWER_BOUND (30)
 #define CYCLE_UPPER_BOUND (80)
 // TODO: make command dependent on operating system
-#define BATTERY_INFO__UBUNTU ("upower -i `upower -e | grep 'BAT'` | egrep 'state|percentage' > ./temp/batteryinfo.txt")
-#define DELETE_TEMP_CONTENTS ("cd ./temp && rm -rf *")
+#define BATTERY_INFO__MACOS ("pmset -g batt > ./temp/batteryinfo.txt")
+#define BATTERY_INFO__UBUNTU ("upower -i `upower -e | grep 'BAT'` | egrep 'state|percentage'")
+
+#define DELETE_TEMP_CONTENTS ("cd ./temp && rm -f *")
 #define BATTERY_INFO_PATH ("./temp/batteryinfo.txt")
 #define BATTERY_LOG_PATH ("./log/batterylog.txt")
 #define POWER_ON ("https://maker.ifttt.com/trigger/charge_low/with/key/dMgkSNQqbJM-9NI1ySrKdb")

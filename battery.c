@@ -78,13 +78,15 @@ int main(void) {
   battery_t *battery = alloc_battery();
 
   // TODO: make dependent on OS
-  read_battery_info(battery, UBUNTU);
+  op_sys_t op_sys = MACOS;
 
-  char *str = malloc(120);
-  state_to_string(battery->state, str);
-  printf("battery: %s\n", str);
-  printf("perc: %d\n", battery->percentage);
-  free(str);
+  read_battery_info(battery, op_sys);
+
+  // char *str123 = malloc(120);
+  // state_to_string(battery->state, str123);
+  // printf("battery: %s\n", str123);
+  // printf("perc: %d\n", battery->percentage);
+  // free(str123);
 
   log_battery_info(battery);
 
