@@ -70,21 +70,12 @@ static void monitor_battery(battery_t *battery) {
 }
 
 
-
-
-
 int main(void) {
 
   battery_t *battery = alloc_battery();
 
   // TODO: make dependent on OS
   read_battery_info(battery, UBUNTU);
-
-  char *str = malloc(120);
-  state_to_string(battery->state, str);
-  printf("battery: %s\n", str);
-  printf("perc: %d\n", battery->percentage);
-  free(str);
 
   log_battery_info(battery);
 
