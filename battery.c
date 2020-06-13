@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
+// #include "battery.h" // TODO: better fix for circular imports
 #include "curl.h"
 #include "time.h"
 #include "battery.h"
@@ -29,17 +31,6 @@ static void state_to_string(state_t state, char *string){
 
 }
 
-static void init_battery(battery_t *battery, char *status, int percentage){
-  if (strcmp(status, "fully-charged") == 0 || strcmp(status, "charging") == 0) {
-    battery->state = CHARGING;
-  } else if (strcmp(status, "discharging") == 0) {
-    battery->state = DISCHARGING;
-  } else {
-    perror("Could not read battery_status");
-    exit(EXIT_FAILURE);
-  }
-  battery->percentage = percentage;
-}
 
 static void log_battery_info(battery_t *battery){
   FILE *log_file = fopen(BATTERY_LOG_PATH, "a");
@@ -75,61 +66,16 @@ static void monitor_battery(battery_t *battery) {
 
 }
 
-static char *skipWhiteSpace(char *str) {
-  char *ptr = str;
-  while (*ptr == ' ') {
-    ptr++;
-  }
-  return ptr;
-}
-
-static void read_battery_info(battery_t *battery) {
-
-  if(system(BATTERY_INFO) != SYSTEM_SUCCESS){
-    perror("Failed to execute upower command");
-    exit(EXIT_FAILURE);
-  }
-
-  FILE *batteryinfo = fopen(BATTERY_INFO_PATH, "r");
-
-  if(batteryinfo == NULL){
-    perror("Failed to read battery information file");
-    exit(EXIT_FAILURE);
-  }
-
-  char buff[MAX_LINE_SIZE + 1];
-
-  char status[MAX_LINE_SIZE + 1];
-  int percentage;
-
-  while (fgets(buff, MAX_LINE_SIZE, batteryinfo)) {
-    char *label = skipWhiteSpace(buff);
-    char *information;
-    __strtok_r(label, ":", &information);
-    information = skipWhiteSpace(information);
-    strtok(information, "\n");
-    if(strcmp(label, "state") == 0){
-      strcpy(status, information);
-    } else {
-      percentage = strtol(information, NULL, 10);
-    }
-  }
-
-  init_battery(battery, status, percentage);
 
 
-  if(fclose(batteryinfo) != 0){
-    perror("Failed to close battery information file");
-    exit(EXIT_FAILURE);
-  }
 
-}
 
 int main(void) {
 
   battery_t *battery = alloc_battery();
 
-  read_battery_info(battery);
+  // TODO: make dependent on OS
+  read_battery_info(battery, UBUNTU);
 
   log_battery_info(battery);
 
