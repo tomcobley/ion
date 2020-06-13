@@ -1,14 +1,11 @@
 #include "battery.h"
 
-typedef enum system {
+typedef enum op_sys {
   UBUNTU,
   MACOS
-} system_t;
+} op_sys_t;
 
-void read_battery_info(battery_t *battery, system_t system);
+void read_battery_info(battery_t *battery, op_sys_t op_sys);
 
 
 // OS dependent:
-
-static void read_battery_info__ubuntu(battery_t *battery, FILE *batteryinfo);
-static void read_battery_info__macos(battery_t *battery, FILE *batteryinfo);

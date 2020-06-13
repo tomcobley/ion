@@ -4,8 +4,11 @@
 
 // #include "battery.h" // TODO: better fix for circular imports
 #include "curl.h"
+#include "sys.h"
 #include "time.h"
-#include "battery.h"
+
+// TODO: improve circular dependency avoidance
+//    #include "battery.h"
 
 
 
@@ -76,6 +79,12 @@ int main(void) {
 
   // TODO: make dependent on OS
   read_battery_info(battery, UBUNTU);
+
+  char *str = malloc(120);
+  state_to_string(battery->state, str);
+  printf("battery: %s\n", str);
+  printf("perc: %d\n", battery->percentage);
+  free(str);
 
   log_battery_info(battery);
 

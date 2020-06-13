@@ -6,7 +6,11 @@
 #include "sys.h"
 
 
-void read_battery_info(battery_t *battery, system_t system) {
+static void read_battery_info__ubuntu(battery_t *battery, FILE *batteryinfo);
+//static void read_battery_info__macos(battery_t *battery, FILE *batteryinfo);
+
+
+void read_battery_info(battery_t *battery, op_sys_t op_sys) {
 
   // TODO: execute command based on operating system
   if(system(BATTERY_INFO__UBUNTU) != SYSTEM_SUCCESS){
@@ -68,15 +72,19 @@ static void read_battery_info__ubuntu(battery_t *battery, FILE *batteryinfo) {
   int percentage;
 
   while (fgets(buff, MAX_LINE_SIZE, batteryinfo)) {
-    char *label = skipWhiteSpace(buff);
-    char *information;
-    __strtok_r(label, ":", &information);
-    information = skipWhiteSpace(information);
-    strtok(information, "\n");
-    if(strcmp(label, "state") == 0){
-      strcpy(status, information);
+    // get ptr to label of this line
+    char *label_ptr = skipWhiteSpace(buff);
+    strtok(label_ptr, ":");
+
+    // get following token (the information) up to the newline character
+    char *info_ptr;
+    info_ptr = strtok(NULL, "\n");
+    info_ptr = skipWhiteSpace(info_ptr);
+
+    if(strcmp(label_ptr, "state") == 0){
+      strcpy(status, info_ptr);
     } else {
-      percentage = strtol(information, NULL, 10);
+      percentage = strtol(info_ptr, NULL, 10);
     }
   }
 
