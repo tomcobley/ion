@@ -1,2 +1,5 @@
 # ignore executable files
 battery
+
+# ignore log files
+batterylog.txt
