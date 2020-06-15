@@ -1,16 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-
-// #include "battery.h" // TODO: better fix for circular imports
 #include "curl.h"
-#include "sys.h"
-#include "time.h"
-
-// TODO: improve circular dependency avoidance
-//    #include "battery.h"
-
-
+#include "log.h"
 
 static battery_t *alloc_battery(void){
   battery_t *battery = calloc(1, sizeof(battery_t));
@@ -19,43 +11,6 @@ static battery_t *alloc_battery(void){
     exit(EXIT_FAILURE);
   }
   return battery;
-}
-
-static void state_to_string(state_t state, char *string){
-  switch (state) {
-  case CHARGING: strncpy(string, "charging", MAX_LINE_SIZE);
-    break;
-  case DISCHARGING: strncpy(string, "discharging", MAX_LINE_SIZE);
-    break;
-  default:
-    perror("Unable to convert state to string");
-    exit(EXIT_FAILURE);
-  }
-
-}
-
-
-static void log_battery_info(battery_t *battery){
-  FILE *log_file = fopen(BATTERY_LOG_PATH, "a");
-  if(log_file == NULL){
-    perror("Failed to open battery logfile");
-    exit(EXIT_FAILURE);
-  }
-  char state_string[MAX_LINE_SIZE];
-  state_to_string(battery->state, state_string);
-
-  time_t rawtime;
-  struct tm * timeinfo;
-  time(&rawtime);
-  timeinfo = localtime(&rawtime);
-
-  fprintf(log_file, "State: %s, Percentage: %d, Time: %s", state_string, battery->percentage, asctime(timeinfo));
-
-  if(fclose(log_file) != 0){
-    perror("Failed to close battery information file");
-    exit(EXIT_FAILURE);
-  }
-
 }
 
 static void monitor_battery(battery_t *battery) {
@@ -70,8 +25,6 @@ static void monitor_battery(battery_t *battery) {
   }
 
 }
-
-
 
 int main(void) {
 

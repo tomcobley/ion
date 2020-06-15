@@ -16,7 +16,7 @@ op_sys_t determine_os(void) {
     printf("Apple OS detected\n");
 	  // apple operating system
     return MACOS;
-  #elif __LINUX__
+  #elif __linux__
     printf("Linux OS detected\n");
 	  // linux operating system
     return LINUX;
@@ -53,6 +53,7 @@ void read_battery_info(battery_t *battery, op_sys_t op_sys) {
   }
 
   // TODO: check for EMPTY file (in case of no access to battery, test on lab machines)
+  //    Note: if temp file did not exist before, no file will be created when there is no access to batt
 
   // TODO: use function pointer instead
   if (op_sys == LINUX) {
