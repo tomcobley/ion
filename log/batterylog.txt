@@ -6,3 +6,4 @@ State: charging, Percentage: 97, Time: Mon Jun 15 15:25:49 2020
 State: charging, Percentage: 97, Time: Mon Jun 15 15:25:59 2020
 State: charging, Percentage: 97, Time: Mon Jun 15 15:27:15 2020
 State: charging, Percentage: 97, Time: Mon Jun 15 15:27:33 2020
+State: charging, Percentage: 97, Time: Mon Jun 15 16:33:55 2020
