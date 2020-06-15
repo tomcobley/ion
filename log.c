@@ -4,7 +4,7 @@
 #include <time.h>
 #include "log.h"
 
-static void state_to_string(state_t state, char *string){
+void state_to_string(state_t state, char *string){
   switch (state) {
   case CHARGING: strncpy(string, "charging", MAX_LINE_SIZE);
     break;

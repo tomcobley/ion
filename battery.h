@@ -1,3 +1,7 @@
+#ifndef BATTERY_H
+#define BATTERY_H
+
+#include "sys.h"
 #define SYSTEM_SUCCESS (0)
 // TODO: change MAX_LINE_SIZE to something more meaningful
 #define MAX_LINE_SIZE (1023)
@@ -16,4 +20,16 @@
 #define POWER_ON ("https://maker.ifttt.com/trigger/charge_low/with/key/dMgkSNQqbJM-9NI1ySrKdb")
 #define POWER_OFF ("https://maker.ifttt.com/trigger/charge_high/with/key/dMgkSNQqbJM-9NI1ySrKdb")
 
+typedef enum state {
+  CHARGING,
+  DISCHARGING
+} state_t;
 
+typedef struct battery {
+  int percentage;
+  state_t state;
+} battery_t;
+
+
+battery_t *alloc_battery(void);
+#endif

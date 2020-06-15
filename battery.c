@@ -4,7 +4,7 @@
 #include "curl.h"
 #include "log.h"
 
-static battery_t *alloc_battery(void){
+battery_t *alloc_battery(void){
   battery_t *battery = calloc(1, sizeof(battery_t));
   if(battery == NULL){
     perror("Failed to allocate memory for battery");
