@@ -37,15 +37,8 @@ int main(void) {
   // determine battery percentage and state, save information to battery
   read_battery_info(battery, op_sys);
 
-  // char *str123 = malloc(120);
-  // state_to_string(battery->state, str123);
-  // printf("battery: %s\n", str123);
-  // printf("perc: %d\n", battery->percentage);
-  // free(str123);
-
   log_battery_info(battery);
 
-  //
   monitor_battery(battery);
 
   // free memory assigned to battery struct
