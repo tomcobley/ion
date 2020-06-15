@@ -3,7 +3,7 @@
 #define MAX_LINE_SIZE (1023)
 #define CYCLE_LOWER_BOUND (30)
 #define CYCLE_UPPER_BOUND (80)
-// TODO: make command dependent on operating system
+
 #define BATTERY_INFO__MACOS ("pmset -g batt > ./temp/batteryinfo.txt")
 #define BATTERY_INFO__LINUX ("upower -i `upower -e | grep 'BAT'` | egrep 'state|percentage'")
 
