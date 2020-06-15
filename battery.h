@@ -10,15 +10,8 @@
 #define DELETE_TEMP_CONTENTS ("cd ./temp && rm -f *")
 #define BATTERY_INFO_PATH ("./temp/batteryinfo.txt")
 #define BATTERY_LOG_PATH ("./log/batterylog.txt")
+#define BATTERY_ANALYSIS_PATH ("./log/batteryanalysis.csv")
 #define POWER_ON ("https://maker.ifttt.com/trigger/charge_low/with/key/dMgkSNQqbJM-9NI1ySrKdb")
 #define POWER_OFF ("https://maker.ifttt.com/trigger/charge_high/with/key/dMgkSNQqbJM-9NI1ySrKdb")
 
-typedef enum state {
-  CHARGING,
-  DISCHARGING
-} state_t;
 
-typedef struct battery {
-  int percentage;
-  state_t state;
-} battery_t;
