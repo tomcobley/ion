@@ -68,7 +68,7 @@ void log_battery_info(battery_t *battery){
     }
   }
   if(number_of_sleeps > 0){
-    printf("Average sleep time = %d\n", sum_sleep_time / number_of_sleeps);
+    printf("Average sleep time = %d in minutes past midnight.\n", sum_sleep_time / number_of_sleeps);
   }
 
   fprintf(analysis_file, "%ld,%s,%d\n", current_time, state_string, battery->percentage);
