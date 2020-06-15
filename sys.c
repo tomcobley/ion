@@ -10,12 +10,29 @@ static void read_battery_info__ubuntu(battery_t *battery, FILE *batteryinfo);
 static void read_battery_info__macos(battery_t *battery, FILE *batteryinfo);
 
 
+op_sys_t determine_os(void) {
+  // determine operating system by compiler flags
+  #if __APPLE__
+    printf("Apple OS detected\n");
+	  // apple operating system
+    return MACOS;
+  #elif __LINUX__
+    printf("Linux OS detected\n");
+	  // linux operating system
+    return LINUX;
+  #else
+    // TODO: handle error more gracefully
+    perror("Unsupported operating system. ");
+    exit(EXIT_FAILURE);
+  #endif
+}
+
 void read_battery_info(battery_t *battery, op_sys_t op_sys) {
 
   int info_status;
 
-  if (op_sys == UBUNTU) {
-    info_status = system(BATTERY_INFO__UBUNTU);
+  if (op_sys == LINUX) {
+    info_status = system(BATTERY_INFO__LINUX);
   } else if (op_sys == MACOS) {
     info_status = system(BATTERY_INFO__MACOS);
   } else {
@@ -24,13 +41,13 @@ void read_battery_info(battery_t *battery, op_sys_t op_sys) {
   }
 
   // TODO: execute command based on operating system
-  if(info_status != SYSTEM_SUCCESS){
+  if (info_status != SYSTEM_SUCCESS) {
     perror("Failed to execute upower command");
     exit(EXIT_FAILURE);
   }
 
   FILE *batteryinfo = fopen(BATTERY_INFO_PATH, "r");
-  if(batteryinfo == NULL){
+  if (batteryinfo == NULL) {
     perror("Failed to read battery information file");
     exit(EXIT_FAILURE);
   }
@@ -38,7 +55,7 @@ void read_battery_info(battery_t *battery, op_sys_t op_sys) {
   // TODO: check for EMPTY file (in case of no access to battery, test on lab machines)
 
   // TODO: use function pointer instead
-  if (op_sys == UBUNTU) {
+  if (op_sys == LINUX) {
     read_battery_info__ubuntu(battery, batteryinfo);
   } else if (op_sys == MACOS) {
     read_battery_info__macos(battery, batteryinfo);
@@ -67,7 +84,7 @@ static char *skip_white_space(char *str) {
 }
 
 
-/////////////////////////       UBUNTU        /////////////////////////
+/////////////////////////       LINUX        /////////////////////////
 
 
 
@@ -76,7 +93,6 @@ static void read_battery_info__ubuntu(battery_t *battery, FILE *batteryinfo) {
   char status[MAX_LINE_SIZE + 1];
   int percentage = -1;
 
-  // TODO: does this need to be a while loop?
   while (fgets(buff, MAX_LINE_SIZE, batteryinfo)) {
     // get ptr to label of this line
     char *label_ptr = skip_white_space(buff);
