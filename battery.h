@@ -5,9 +5,11 @@
 #define CYCLE_UPPER_BOUND (80)
 
 #define BATTERY_INFO__MACOS ("pmset -g batt > ./temp/batteryinfo.txt")
-#define BATTERY_INFO__LINUX ("upower -i `upower -e | grep 'BAT'` | egrep 'state|percentage'")
+#define BATTERY_INFO__LINUX ("upower -i `upower -e \
+  | grep 'BAT'` \
+  | egrep 'state|percentage' > ./temp/batteryinfo.txt")
 
-#define DELETE_TEMP_CONTENTS ("cd ./temp && rm -f *")
+#define DELETE_TEMP_CONTENTS ("cd ./temp && rm batteryinfo.txt")
 #define BATTERY_INFO_PATH ("./temp/batteryinfo.txt")
 #define BATTERY_LOG_PATH ("./log/batterylog.txt")
 #define POWER_ON ("https://maker.ifttt.com/trigger/charge_low/with/key/dMgkSNQqbJM-9NI1ySrKdb")
