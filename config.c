@@ -271,8 +271,9 @@ FILE *open_config_file(char *mode) {
 }
 
 
-void init(config_t *config) {
+void init(void) {
 
+  config_t *config = alloc_config();
   bool config_valid = false;
   printf("\n");
 

@@ -19,6 +19,7 @@ battery_t *alloc_battery(void){
 // TODO: what's this?
 #ifndef DEBUG
 
+
 static void monitor_battery(battery_t *battery, config_t *config) {
   if (battery->percentage <= config->int_cycle_min_charge_percentage) {
     if (battery->state != CHARGING) {
@@ -39,7 +40,13 @@ static void monitor_battery(battery_t *battery, config_t *config) {
   }
 }
 
-int main(void) {
+int main(int argc, char const *argv[]) {
+
+  if (argc > 1 && strcmp(argv[1], "init") == 0) {
+    // call init method from config.c
+    init();
+    exit(EXIT_SUCCESS);
+  }
 
   // allocate memory for config (settings) struct
   config_t *config = alloc_config();
