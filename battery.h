@@ -21,7 +21,7 @@
 #define POWER_ON ("https://maker.ifttt.com/trigger/charge_low/with/key/dMgkSNQqbJM-9NI1ySrKdb")
 #define POWER_OFF ("https://maker.ifttt.com/trigger/charge_high/with/key/dMgkSNQqbJM-9NI1ySrKdb")
 
-
+void free_battery(battery_t *battery);
 battery_t *alloc_battery(void);
 
 #endif
