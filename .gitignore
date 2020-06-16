@@ -3,3 +3,6 @@ battery
 
 # ignore log files
 batterylog.txt
+
+# ignore config file
+.config
