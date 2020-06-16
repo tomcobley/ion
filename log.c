@@ -22,14 +22,14 @@ void log_battery_info(battery_t *battery){
     perror("Failed to open battery logfile");
     exit(EXIT_FAILURE);
   }
-  
+
   FILE *analysis_file = fopen(BATTERY_ANALYSIS_PATH, "a+");
   if(analysis_file == NULL){
     perror("Failed to open battery analysis file");
     exit(EXIT_FAILURE);
   }
-  
-  
+
+
   char state_string[MAX_LINE_SIZE];
   // converts enum into string representation
   state_to_string(battery->state, state_string);
@@ -60,12 +60,13 @@ void log_battery_info(battery_t *battery){
       if(prev_time < (temp_time - 4 * HOUR_IN_SECONDS)){
 	struct tm *prev = localtime(&prev_time);
 	// converts prev to minutes past midnight
-	sum_sleep_time += prev->tm_hour * 60 + prev->tm_min; 
+	sum_sleep_time += prev->tm_hour * 60 + prev->tm_min;
 	number_of_sleeps ++;
       }
     prev_time = temp_time;
     }
   }
+  // TODO: PREVENT DIV BY 0
   int average_number_of_sleeps = sum_sleep_time / number_of_sleeps;
   if(number_of_sleeps > 0){
     printf("Average sleep time = %d in minutes past midnight.\n", average_number_of_sleeps);
@@ -80,12 +81,12 @@ void log_battery_info(battery_t *battery){
    */
 
   fprintf(analysis_file, "%ld,%s,%d\n", current_time, state_string, battery->percentage);
-  
+
   if(fclose(log_file) != 0){
     perror("Failed to close battery log file");
     exit(EXIT_FAILURE);
   }
-  
+
   if(fclose(analysis_file) != 0){
     perror("Failed to close battery analysis file");
     exit(EXIT_FAILURE);
