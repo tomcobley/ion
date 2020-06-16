@@ -18,7 +18,7 @@ int main(void) {
     exit(EXIT_FAILURE);
   }
   read_battery_info__ubuntu(b1, linux_in1);
-  check_battery(b1, 50, CHARGING, "read_battery_info__ubuntu: percentage: 50%, state: charging", state);
+  equal_battery(b1, 50, CHARGING, "read_battery_info__ubuntu: percentage: 50%, state: charging", state);
   free_battery(b1);
   fclose(linux_in1);
 
@@ -29,7 +29,7 @@ int main(void) {
     exit(EXIT_FAILURE);
   }
   read_battery_info__ubuntu(b2, linux_in2);
-  check_battery(b2, 100, CHARGING, "read_battery_info__ubuntu: percentage: 100%, state: fully_charged", state);
+  equal_battery(b2, 100, CHARGING, "read_battery_info__ubuntu: percentage: 100%, state: fully_charged", state);
   free_battery(b2);
   fclose(linux_in2);
 
@@ -40,7 +40,7 @@ int main(void) {
     exit(EXIT_FAILURE);
   }
   read_battery_info__ubuntu(b3, linux_in3);
-  check_battery(b3, 25, DISCHARGING, "read_battery_info__ubuntu: percentage: 25%, state: discharging", state);
+  equal_battery(b3, 25, DISCHARGING, "read_battery_info__ubuntu: percentage: 25%, state: discharging", state);
   free_battery(b3);
   fclose(linux_in3);
 
@@ -51,7 +51,7 @@ int main(void) {
     exit(EXIT_FAILURE);
   }
   read_battery_info__ubuntu(b4, linux_in4);
-  check_battery(b4, 100, DISCHARGING, "read_battery_info__ubuntu: percentage: 100%, state: discharging", state);
+  equal_battery(b4, 100, DISCHARGING, "read_battery_info__ubuntu: percentage: 100%, state: discharging", state);
   free_battery(b4);
   fclose(linux_in4);
 
