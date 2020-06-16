@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Werror -Wall -g -std=c99 -pedantic
+CFLAGS = -Wall -g -std=c99 -pedantic
 LIBS = -lcurl
 OBJS = curl.o sys.o log.o battery.o config.o
 
