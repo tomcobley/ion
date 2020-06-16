@@ -1,0 +1,1 @@
+State: charging, Percentage: 50, Time: Tue Jun 16 09:30:00 2020
