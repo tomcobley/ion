@@ -2,12 +2,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
-
 #include "sys.h"
+#include "battery.h"
 
-
-static void read_battery_info__ubuntu(battery_t *battery, FILE *batteryinfo);
-static void read_battery_info__macos(battery_t *battery, FILE *batteryinfo);
+void read_battery_info__ubuntu(battery_t *battery, FILE *batteryinfo);
+void read_battery_info__macos(battery_t *battery, FILE *batteryinfo);
 
 
 op_sys_t determine_os(void) {
@@ -89,7 +88,7 @@ static char *skip_white_space(char *str) {
 
 
 
-static void read_battery_info__ubuntu(battery_t *battery, FILE *batteryinfo) {
+void read_battery_info__ubuntu(battery_t *battery, FILE *batteryinfo) {
   char buff[MAX_LINE_SIZE + 1];
   char status[MAX_LINE_SIZE + 1];
   int percentage = -1;
@@ -135,7 +134,7 @@ static void read_battery_info__ubuntu(battery_t *battery, FILE *batteryinfo) {
 
 
 
-static void read_battery_info__macos(battery_t *battery, FILE *batteryinfo) {
+void read_battery_info__macos(battery_t *battery, FILE *batteryinfo) {
   char buff[MAX_LINE_SIZE + 1];
   int percentage = -1;
   // TODO: change size of buffer for status to be lower

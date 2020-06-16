@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
-#include "log.h"
+#include "battery.h"
 
-static void state_to_string(state_t state, char *string){
+void state_to_string(state_t state, char *string){
   switch (state) {
   case CHARGING: strncpy(string, "charging", MAX_LINE_SIZE);
     break;
@@ -39,7 +39,6 @@ void log_battery_info(battery_t *battery){
 
   fprintf(log_file, "State: %s, Percentage: %d, Time: %s", state_string, battery->percentage, ctime(&current_time));
 
-  // TODO: add field in battery struct for 'pre-sleep' (boolean)
 
   // rawtime is seconds since 01/01/1970
   // 1 day = 24 * 3600 seconds
@@ -67,9 +66,18 @@ void log_battery_info(battery_t *battery){
     prev_time = temp_time;
     }
   }
+  int average_number_of_sleeps = sum_sleep_time / number_of_sleeps;
   if(number_of_sleeps > 0){
-    printf("Average sleep time = %d\n", sum_sleep_time / number_of_sleeps);
+    printf("Average sleep time = %d in minutes past midnight.\n", average_number_of_sleeps);
   }
+  /*
+   * TODO: add field in battery struct for 'pre-sleep' (boolean)
+   * struct tm *current = localtime(&current_time);
+   * // checks if current time is within 20 minute window
+   * if(average_number_of_sleeps - (current->tm_hour*60 + current->tm_min) < 20){
+   *	battery->pre_sleep_time = true;
+   * }
+   */
 
   fprintf(analysis_file, "%ld,%s,%d\n", current_time, state_string, battery->percentage);
   

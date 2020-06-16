@@ -2,7 +2,11 @@
 battery
 
 # ignore log files
+<<<<<<< HEAD
 batterylog.txt
 
 # ignore config file
 .config
+=======
+log/
+>>>>>>> develop-extension

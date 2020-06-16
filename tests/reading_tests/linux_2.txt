@@ -1,0 +1,2 @@
+    state:               fully-charged
+    percentage:          100%

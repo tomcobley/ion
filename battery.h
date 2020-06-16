@@ -1,3 +1,8 @@
+#ifndef BATTERY_H
+#define BATTERY_H
+
+#include "sys.h"
+#include "log.h"
 #define SYSTEM_SUCCESS (0)
 // TODO: change MAX_LINE_SIZE to something more meaningful
 #define MAX_LINE_SIZE (1023)
@@ -17,3 +22,6 @@
 #define POWER_OFF ("https://maker.ifttt.com/trigger/charge_high/with/key/dMgkSNQqbJM-9NI1ySrKdb")
 
 
+battery_t *alloc_battery(void);
+
+#endif

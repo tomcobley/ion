@@ -1,0 +1,2 @@
+    state:               charging
+    percentage:          50%

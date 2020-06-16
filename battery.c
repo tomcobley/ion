@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "battery.h"
 #include "curl.h"
-#include "log.h"
 
-static battery_t *alloc_battery(void){
+battery_t *alloc_battery(void){
   battery_t *battery = calloc(1, sizeof(battery_t));
   if(battery == NULL){
     perror("Failed to allocate memory for battery");
@@ -13,6 +13,7 @@ static battery_t *alloc_battery(void){
   return battery;
 }
 
+#ifndef DEBUG
 static void monitor_battery(battery_t *battery) {
   if (battery->percentage <= CYCLE_LOWER_BOUND && battery->state != CHARGING) {
     printf("Current battery level too low, switching plug on.\n");
@@ -37,15 +38,8 @@ int main(void) {
   // determine battery percentage and state, save information to battery
   read_battery_info(battery, op_sys);
 
-  // char *str123 = malloc(120);
-  // state_to_string(battery->state, str123);
-  // printf("battery: %s\n", str123);
-  // printf("perc: %d\n", battery->percentage);
-  // free(str123);
-
   log_battery_info(battery);
 
-  //
   monitor_battery(battery);
 
   // free memory assigned to battery struct
@@ -59,3 +53,4 @@ int main(void) {
 
   return EXIT_SUCCESS;
 }
+#endif
