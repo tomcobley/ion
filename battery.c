@@ -10,7 +10,13 @@ battery_t *alloc_battery(void){
     perror("Failed to allocate memory for battery");
     exit(EXIT_FAILURE);
   }
+  battery->data = calloc(1, sizeof(battery_data_t));
   return battery;
+}
+
+void free_battery(battery_t *battery){
+  free(battery->data);
+  free(battery);
 }
 
 #ifndef DEBUG
@@ -18,7 +24,9 @@ static void monitor_battery(battery_t *battery) {
   if (battery->percentage <= CYCLE_LOWER_BOUND && battery->state != CHARGING) {
     printf("Current battery level too low, switching plug on.\n");
     post_to_webhook(POWER_ON);
-  } else if(battery->percentage >= CYCLE_UPPER_BOUND && battery->state != DISCHARGING) {
+  } else if(battery->percentage >= CYCLE_UPPER_BOUND 
+                  && battery->state != DISCHARGING
+                  && !battery->data->pre_sleep) {
     printf("Current battery level too high, switching plug off\n");
     post_to_webhook(POWER_OFF);
   } else {
@@ -37,13 +45,15 @@ int main(void) {
 
   // determine battery percentage and state, save information to battery
   read_battery_info(battery, op_sys);
-
+  
+  // log battery percentage and state for sleep time analysis
   log_battery_info(battery);
 
+  // monitor current battery state and determine if plug state should change
   monitor_battery(battery);
 
   // free memory assigned to battery struct
-  free(battery);
+  free_battery(battery);
 
   if (system(DELETE_TEMP_CONTENTS) != SYSTEM_SUCCESS) {
     perror("Failed to delete contents of temp");
