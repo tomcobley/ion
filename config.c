@@ -274,7 +274,6 @@ FILE *open_config_file(char *mode) {
 void init(void) {
 
   config_t *config = alloc_config();
-  bool config_valid = false;
   printf("\n");
 
   // open config file for reading
@@ -285,7 +284,7 @@ void init(void) {
   } else {
     // config file exists, so read config from it
     //    return true (and populate config) if it is a valid config
-    config_valid = read_config(config_file, config);
+    read_config(config_file, config);
 
     fclose(config_file);
   }

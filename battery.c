@@ -66,8 +66,12 @@ int main(int argc, char const *argv[]) {
   // configuration was read successfully and saved to config, so close config_file
   fclose(config_file);
 
+
   printf("System configuration:\n");
   print_config(config);
+
+  fflush(stdout);
+
 
   // allocate memory for the battery struct
   battery_t *battery = alloc_battery();
