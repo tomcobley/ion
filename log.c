@@ -77,6 +77,7 @@ void log_battery_info(battery_t *battery){
    * if(average_number_of_sleeps - (current->tm_hour*60 + current->tm_min) < 20){
    *	battery->pre_sleep_time = true;
    * }
+   */
 
   fprintf(analysis_file, "%ld,%s,%d\n", current_time, state_string, battery->percentage);
   
