@@ -18,5 +18,6 @@ testanalysis: testanalysis.c $(COMMON)
 clean:
 	rm -f *.o
 	rm -f testreading
-	rm -f testanalysis 
+	rm -f testanalysis
+	cd ./temp && rm -f *
 

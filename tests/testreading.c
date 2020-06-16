@@ -58,11 +58,10 @@ int main(void) {
 
   // TODO: ADD MACOS READING FILES
 
-  check_file("./reading_tests/linux_3.txt", "./reading_tests/linux_4.txt", "test, remove after", state);
 
   // *************** END OF TESTS ***************
 
-  printf("\n%d test(s) failed, %d test(s) passed\n", state->failures, state->successes);
+  printf("%d test(s) failed, %d test(s) passed\n\n", state->failures, state->successes);
   return EXIT_SUCCESS;
 }
 #endif
