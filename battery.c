@@ -13,6 +13,7 @@ battery_t *alloc_battery(void){
   return battery;
 }
 
+#ifndef DEBUG
 static void monitor_battery(battery_t *battery) {
   if (battery->percentage <= CYCLE_LOWER_BOUND && battery->state != CHARGING) {
     printf("Current battery level too low, switching plug on.\n");
@@ -52,3 +53,4 @@ int main(void) {
 
   return EXIT_SUCCESS;
 }
+#endif

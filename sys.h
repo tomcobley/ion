@@ -1,3 +1,6 @@
+#ifndef SYS_H
+#define SYS_H
+
 #include <stdio.h>
 #include "batterystate.h"
 
@@ -14,3 +17,5 @@ void read_battery_info(battery_t *battery, op_sys_t op_sys);
 void read_battery_info__ubuntu(battery_t *battery, FILE *batteryinfo);
 
 void read_battery_info__macos(battery_t *battery, FILE *batteryinfo);
+
+#endif

@@ -1,29 +1,19 @@
 CC      = gcc
-CFLAGS  = -Wall -g -D_POSIX_SOURCE -std=c99 -Werror -pedantic
+CFLAGS  = -Wall -g -D_POSIX_SOURCE -std=c99 -Werror -pedantic -DDEBUG
 BUILD   = testreading
-OBJS = sys.o log.o battery.o check.o
-
-.SUFFIXES: .c .o
+COMMON  = ../battery.c ../battery.h check.c check.h ../log.c ../log.h ../batterystate.h ../sys.c ../sys.h
 
 .PHONY: all clean runtests
 
 all: $(BUILD)
 
-runtests: 
+runtests: all
 	./testreading
+	make clean
 
-log.o: ../log.c ../log.h
-
-sys.o: ../sys.c ../sys.h
-
-battery.o: ../battery.c ../battery.h
-
-check.o: check.c check.h
-
-testreading: sys.o log.o battery.o check.o testreading.c
-	#$(CC) -o testreading $(OBJS) $(CFLAGS) $(LIBS)
+testreading: testreading.c $(COMMON) 
 
 clean:
-	rm -f $(wildcard *.o)
+	rm -f *.o
 	rm -f testreading
 
