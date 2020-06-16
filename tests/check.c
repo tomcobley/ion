@@ -15,6 +15,16 @@ bool check(bool truth_value, char test_name[], test_state *state) {
   return truth_value;
 }
 
+bool equal_bool(bool a, bool b, char test_name[], test_state *state){
+  bool success = check(a == b, test_name, state);
+  if (!success) {
+    printf("            EXPECTED a == b\n");
+    printf("                     BUT a = %s\n", a ?"true":"false");
+    printf("                         b = %s\n", b ?"true":"false");
+  }  
+  return success;
+}
+
 bool equal_int(int a, int b, char test_name[], test_state *state) {
   bool success = check( a == b , test_name, state);
   if (!success) {
