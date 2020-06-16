@@ -14,6 +14,7 @@ void state_to_string(state_t state, char *string){
     exit(EXIT_FAILURE);
   }
 }
+
 static void update_sleep_count(time_t prev_time, int *sum, int *count){
   struct tm *prev = localtime(&prev_time);
   // tm_isdst returns -1 if information not available
@@ -24,6 +25,7 @@ static void update_sleep_count(time_t prev_time, int *sum, int *count){
   (*sum) += prev->tm_hour * 60 + prev->tm_min; 
 	(*count)++;
 }
+
 void monitor_sleep_time(time_t current_time, battery_t *battery, FILE* analysis_file){
 
   // sum of 7 days previous sleep times stored in minutes past midnight

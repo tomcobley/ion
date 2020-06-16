@@ -1,7 +1,5 @@
 #include <stdlib.h>
 #include "check.h"
-#include "../log.h"
-#include "../battery.h"
 
 test_state struct_test_state;
 test_state *state = &struct_test_state;
