@@ -1,5 +1,3 @@
-#define MACRO (textstr)
-
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
@@ -7,38 +5,7 @@
 #include <stdint.h>
 #include <assert.h>
 
-
-// the maximum length a value in the config file can take (some URLs may be long)
-#define MAX_CONFIG_VALUE_LENGTH (2084)
-
-// the maximum length a line in the config file can take
-#define MAX_CONFIG_LINE_LENGTH (MAX_CONFIG_VALUE_LENGTH + 100)
-
-#define CONFIG_FILE_PATH ("./.config")
-
-
-
-
-// Note: whenever a config option is added, code in this file must be updated
-//    in multiple places. These places are marked with a comment:
-//       '//CONFIG_UPDATE'
-
-//CONFIG_UPDATE
-typedef struct config {
-  char *charge_low_webhook_url;
-  char *charge_high_webhook_url;
-} config_t;
-
-//CONFIG_UPDATE
-// Note: the order of the config file must be identical to the order of the
-//    definition below,
-//    and CONFIG_OPTIONS_COUNT must represent the number of config options in
-//    this definition and the definition above.
-#define CONFIG_OPTIONS_COUNT (2)
-char *config_format[CONFIG_OPTIONS_COUNT] = {
-  "charge_low_webhook_url",
-  "charge_high_webhook_url"
-};
+#include "init.h"
 
 
 // returns a pointer to a heap allocated struct of type config_t
@@ -47,16 +14,12 @@ config_t *alloc_config(void) {
   if (!config) {
     perror("Memory allocation failed for config. "); exit(EXIT_FAILURE);
   }
-
   return config;
 }
 
-
-// TODO: move to utils?
-bool streq(const char *a, const char *b) {
+static bool streq(const char *a, const char *b) {
   return strcmp(a, b) == 0;
 }
-
 
 // function to copy the supplied src string into *dest.
 //    if *dest is NULL, allocate memory for it
@@ -104,6 +67,7 @@ void print_config(config_t *config) {
 //    (i.e. the file exists, is structured correctly and has been successfully
 //     parsed to generate a config struct)
 // if successful, the config values will be saved to the supplied struct
+// Pre: config_file should point to the START of the file
 bool read_config(FILE *config_file, config_t *config) {
 
   int count = 0;
@@ -115,19 +79,13 @@ bool read_config(FILE *config_file, config_t *config) {
     strtok(line_buffer, "=");
     if (!streq(line_buffer, config_format[count])) {
       // key string is not correct according to config_format, so return false
-      printf("Incorrect string, expected %s, got %s\n", config_format[count], line_buffer);
+      //printf("Incorrect string, expected %s, got %s\n", config_format[count], line_buffer);
       return false;
     }
-
-    printf("line_buffer: %s\n", line_buffer);
-
 
     // key string is correct, so extract value
     //    (use NULL parameter to strtok to continue tokenizing line_buffer)
     char *value = strtok(NULL, ";");
-
-    printf("val: %s\n", value);
-
 
     // line_buffer still points to key, val points to value for this line;
     //    save this value to relevant member in config
@@ -139,7 +97,7 @@ bool read_config(FILE *config_file, config_t *config) {
 
   if (count < CONFIG_OPTIONS_COUNT) {
     // not enough options specified, return false
-    printf("%s, count = %d\n", "not enough options", count);
+    //printf("%s, count = %d\n", "not enough options", count);
     return false;
   }
 
@@ -149,22 +107,23 @@ bool read_config(FILE *config_file, config_t *config) {
 
 
 static void update_config_option(char **dest, const char *prompt) {
-  printf("%s:\n", prompt);
+  printf("\n%s:\n", prompt);
   if (*dest) {
     // *dest is not NULL, so present default option
-    printf("- or press ENTER to use \"%s\"\n", *dest);
+    printf("        [or ENTER to use \"%s\"]\n", *dest);
   }
 
   char response[MAX_CONFIG_VALUE_LENGTH];
   fgets(response, MAX_CONFIG_VALUE_LENGTH, stdin);
-  // strip \n from response
-  if (response[strlen(response - 1)] == '\n') {
-    response[strlen(response - 1)] = '\0';
+
+  // remove any trailing '\n's from response
+  for (int i = 0; response[i]; i++) {
+    if (response[i] == '\n') { response[i] = '\0'; break; }
   }
 
   if (streq(response, "") && !*dest) {
     // empty response not allowed as no default exists, so ask again
-    printf("%s\n", "Please enter a response: \n");
+    fprintf(stderr, "Please enter a response. ");
     update_config_option(dest, prompt);
   } else if (streq(response, "")) {
     // use default (i.e. don't change value of dest)
@@ -177,7 +136,7 @@ static void update_config_option(char **dest, const char *prompt) {
 // take user input to populate the supplied config struct.
 //    if values already exist in config, the user will be able to leave these
 //    by entering an empty string for a new value
-void get_config(config_t *config) {
+static void get_config(config_t *config) {
 
   for(int i = 0; i < CONFIG_OPTIONS_COUNT; i++) {
     char *key = config_format[i];
@@ -194,29 +153,53 @@ void get_config(config_t *config) {
 
 
 
+// Function to write
+static void write_config_file(FILE *config_file, config_t *config) {
+
+  //CONFIG_UPDATE
+  fprintf(config_file, "%s=%s;\n", "charge_low_webhook_url",
+                            config->charge_low_webhook_url);
+  fprintf(config_file, "%s=%s;\n", "charge_high_webhook_url",
+                            config->charge_high_webhook_url);
+
+}
+
+
+
 void init(config_t *config) {
 
-  FILE *config_file = fopen(CONFIG_FILE_PATH, "a+");
+  bool config_valid = false;
+  printf("\n");
+
+  // open config file for reading
+  FILE *config_file = fopen(CONFIG_FILE_PATH, "r");
+  if (config_file == NULL) {
+    // no config file exists, output message
+    printf("No .config file found. ");
+  } else {
+    // config file exists, so read config from it
+    //    return true (and populate config) if it is a valid config
+    config_valid = read_config(config_file, config);
+
+    fclose(config_file);
+  }
+
+  printf("Enter config options below (or press ENTER to use previous values where given):\n");
+
+  get_config(config);
+
+  printf("Configuration updated successfully.\n");
+  //print_config(config);
+
+
+  // reopen config file for writing (to overwrite current contents)
+  config_file = fopen(CONFIG_FILE_PATH, "w");
   if (config_file == NULL) {
     perror("Failed to open/create config file. "); exit(EXIT_FAILURE);
   }
 
-  // rewind to start of file
-  rewind(config_file);
-
-  bool config_valid = read_config(config_file, config);
-
-  if (config_valid) {
-    printf("valid config\n");
-    print_config(config);
-  } else {
-    printf("invalid config\n");
-  }
-
-  get_config(config);
-
-  printf("Configuration updated successfully:\n");
-  print_config(config);
+  // write updated config to config file
+  write_config_file(config_file, config);
 
 }
 
@@ -230,7 +213,5 @@ int main(int argc, char const *argv[]) {
   init(config);
 
   free_config(config);
-
-
 
 }
