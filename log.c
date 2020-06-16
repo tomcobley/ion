@@ -14,7 +14,16 @@ void state_to_string(state_t state, char *string){
     exit(EXIT_FAILURE);
   }
 }
-
+static void update_sleep_count(time_t prev_time, int *sum, int *count){
+  struct tm *prev = localtime(&prev_time);
+  // tm_isdst returns -1 if information not available
+  if(prev->tm_isdst >= 0){
+    prev->tm_hour -= prev->tm_isdst;                                                     
+  }
+	// converts prev to minutes past midnight
+  (*sum) += prev->tm_hour * 60 + prev->tm_min; 
+	(*count)++;
+}
 void monitor_sleep_time(time_t current_time, battery_t *battery, FILE* analysis_file){
 
   // sum of 7 days previous sleep times stored in minutes past midnight
@@ -33,14 +42,7 @@ void monitor_sleep_time(time_t current_time, battery_t *battery, FILE* analysis_
       // only stores if there is a difference in 4 hours to prev
       // this means that prev was the sleep time
       if(prev_time < (temp_time - 4 * HOUR_IN_SECONDS)){
-	      struct tm *prev = localtime(&prev_time);
-        // tm_isdst returns -1 if information not available
-        if(prev->tm_isdst >= 0){
-           prev->tm_hour -= prev->tm_isdst;                                                     
-        }
-	      // converts prev to minutes past midnight
-	      sum_sleep_time += prev->tm_hour * 60 + prev->tm_min; 
-	      number_of_sleeps ++;
+        update_sleep_count(prev_time, &sum_sleep_time, &number_of_sleeps);
       }
     prev_time = temp_time;
     }
@@ -48,12 +50,7 @@ void monitor_sleep_time(time_t current_time, battery_t *battery, FILE* analysis_
 
   // checks if final line of csv is also a sleep time
   if(prev_time < (current_time - 4 * HOUR_IN_SECONDS)){
-    struct tm *prev = localtime(&prev_time);
-    if(prev->tm_isdst >= 0){                                                
-      prev->tm_hour -= prev->tm_isdst;                                                     
-    } 
-    sum_sleep_time += prev->tm_hour * 60 + prev->tm_min;                    
-    number_of_sleeps ++;
+    update_sleep_count(prev_time, &sum_sleep_time, &number_of_sleeps);
   }
 
   if(number_of_sleeps > 0){
