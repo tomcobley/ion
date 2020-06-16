@@ -45,31 +45,11 @@ int main(void) {
 
   // determine battery percentage and state, save information to battery
   read_battery_info(battery, op_sys);
-
-  FILE *log_file = fopen(BATTERY_LOG_PATH, "a");
-  if(log_file == NULL){
-    perror("Failed to open battery logfile");
-    exit(EXIT_FAILURE);
-  }
   
-  FILE *analysis_file = fopen(BATTERY_ANALYSIS_PATH, "a+");
-  if(analysis_file == NULL){
-    perror("Failed to open battery analysis file");
-    exit(EXIT_FAILURE);
-  }
+  // log battery percentage and state for sleep time analysis
+  log_battery_info(battery);
 
-  log_battery_info(battery, log_file, analysis_file);
-
-  if(fclose(log_file) != 0){
-    perror("Failed to close battery log file");
-    exit(EXIT_FAILURE);
-  }
-  
-  if(fclose(analysis_file) != 0){
-    perror("Failed to close battery analysis file");
-    exit(EXIT_FAILURE);
-  }
-
+  // monitor current battery state and determine if plug state should change
   monitor_battery(battery);
 
   // free memory assigned to battery struct
