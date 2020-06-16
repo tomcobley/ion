@@ -34,6 +34,10 @@ void monitor_sleep_time(time_t current_time, battery_t *battery, FILE* analysis_
       // this means that prev was the sleep time
       if(prev_time < (temp_time - 4 * HOUR_IN_SECONDS)){
 	      struct tm *prev = localtime(&prev_time);
+        // tm_isdst returns -1 if information not available
+        if(prev->tm_isdst >= 0){
+           prev->tm_hour -= prev->tm_isdst;                                                     
+        }
 	      // converts prev to minutes past midnight
 	      sum_sleep_time += prev->tm_hour * 60 + prev->tm_min; 
 	      number_of_sleeps ++;
@@ -45,6 +49,9 @@ void monitor_sleep_time(time_t current_time, battery_t *battery, FILE* analysis_
   // checks if final line of csv is also a sleep time
   if(prev_time < (current_time - 4 * HOUR_IN_SECONDS)){
     struct tm *prev = localtime(&prev_time);
+    if(prev->tm_isdst >= 0){                                                
+      prev->tm_hour -= prev->tm_isdst;                                                     
+    } 
     sum_sleep_time += prev->tm_hour * 60 + prev->tm_min;                    
     number_of_sleeps ++;
   }
