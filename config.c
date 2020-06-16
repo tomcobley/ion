@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <assert.h>
+#include <errno.h>
 
 #include "config.h"
 
@@ -14,11 +15,22 @@ config_t *alloc_config(void) {
   if (!config) {
     perror("Memory allocation failed for config. "); exit(EXIT_FAILURE);
   }
+  //CONFIG_UPDATE (char * members don't need initialising)
+  config->int_cycle_min_charge_percentage = -1;
+  config->int_cycle_max_charge_percentage = -1;
   return config;
 }
 
 static bool streq(const char *a, const char *b) {
   return strcmp(a, b) == 0;
+}
+
+static void check_percentage(int val) {
+  if (val < 0 || val > 100) {
+    fprintf(stderr,
+            "Percentage value must be between 0 and 100: value given: %d\n", val
+    );
+  }
 }
 
 // function to copy the supplied src string into *dest.
@@ -29,18 +41,44 @@ static void populate_string(char **dest_ptr, const char *src, int max_length) {
     // if *dest_ptr is still NULL
     perror("Memory allocation failed. "); exit(EXIT_FAILURE);
   }
+  assert(src != NULL);
   strncpy(*dest_ptr, src, max_length);
 }
 
 // set the value of the config option corresponding to the supplied key
 //    if the struct member is not initialised, allocate memory for it
-void set_config_option(config_t *config, char *key, char *value) {
+// if the value should be a string, it will be passed using str_value.
+//    if it should be an int, it will be passed using int_value
+void set_config_option(config_t *config, const char *key, const char *value) {
+
+  bool use_int = false;
+  int value_int;
+
+  if (strncmp(key, "int_", 4) == 0) {
+    // key is of int type
+    use_int = true;
+    value_int = strtol(value, NULL, 10);
+    if (errno == EINVAL) { perror("Failed to convert str to int. "); exit(EXIT_FAILURE); }
+  }
+
   //CONFIG_UPDATE
-  if (streq(key, "charge_low_webhook_url")) {
-    populate_string(&config->charge_low_webhook_url, value, MAX_CONFIG_VALUE_LENGTH);
-  } else if (streq(key, "charge_high_webhook_url")) {
-    populate_string(&config->charge_high_webhook_url, value, MAX_CONFIG_VALUE_LENGTH);
-  } else {
+  if (streq(key, "str_charge_low_webhook_url")) {
+    assert(!use_int);
+    populate_string(&config->str_charge_low_webhook_url, value, MAX_CONFIG_VALUE_LENGTH);
+  } else if (streq(key, "str_charge_high_webhook_url")) {
+    assert(!use_int);
+    populate_string(&config->str_charge_high_webhook_url, value, MAX_CONFIG_VALUE_LENGTH);
+  } else if (streq(key, "int_cycle_min_charge_percentage")) {
+    assert(use_int);
+    check_percentage(value_int);
+    config->int_cycle_min_charge_percentage = value_int;
+  } else if (streq(key, "int_cycle_max_charge_percentage")) {
+    assert(use_int);
+    check_percentage(value_int);
+    config->int_cycle_max_charge_percentage = value_int;
+  }
+
+  else {
     // TODO:
     assert(false);
   }
@@ -49,8 +87,8 @@ void set_config_option(config_t *config, char *key, char *value) {
 // frees a config struct created by alloc_config
 void free_config(config_t *config) {
   //CONFIG_UPDATE
-  free(config->charge_low_webhook_url);
-  free(config->charge_high_webhook_url);
+  free(config->str_charge_low_webhook_url);
+  free(config->str_charge_high_webhook_url);
   free(config);
 }
 
@@ -58,8 +96,10 @@ void free_config(config_t *config) {
 // print config (for debugging purposes)
 void print_config(config_t *config) {
   //CONFIG_UPDATE
-  printf("charge_low_webhook_url: %s\n", config->charge_low_webhook_url);
-  printf("charge_high_webhook_url: %s\n", config->charge_high_webhook_url);
+  printf("str_charge_low_webhook_url: %s\n", config->str_charge_low_webhook_url);
+  printf("str_charge_high_webhook_url: %s\n", config->str_charge_high_webhook_url);
+  printf("int_cycle_min_charge_percentage: %d\n", config->int_cycle_min_charge_percentage);
+  printf("int_cycle_max_charge_percentage: %d\n", config->int_cycle_max_charge_percentage);
 }
 
 
@@ -106,46 +146,88 @@ bool read_config(FILE *config_file, config_t *config) {
 }
 
 
-static void update_config_option(char **dest, const char *prompt) {
-  printf("\n%s:\n", prompt);
-  if (*dest) {
-    // *dest is not NULL, so present default option
-    printf("        [or ENTER to use \"%s\"]\n", *dest);
-  }
+static void get_response(char *dest, int max_length) {
+  fgets(dest, max_length, stdin);
 
-  char response[MAX_CONFIG_VALUE_LENGTH];
-  fgets(response, MAX_CONFIG_VALUE_LENGTH, stdin);
-
-  // remove any trailing '\n's from response
-  for (int i = 0; response[i]; i++) {
-    if (response[i] == '\n') { response[i] = '\0'; break; }
-  }
-
-  if (streq(response, "") && !*dest) {
-    // empty response not allowed as no default exists, so ask again
-    fprintf(stderr, "Please enter a response. ");
-    update_config_option(dest, prompt);
-  } else if (streq(response, "")) {
-    // use default (i.e. don't change value of dest)
-    printf("Using default.\n");
-  } else {
-    populate_string(dest, response, MAX_CONFIG_VALUE_LENGTH);
+  // remove any trailing '\n's from dest
+  for (int i = 0; dest[i]; i++) {
+    if (dest[i] == '\n') { dest[i] = '\0'; break; }
   }
 }
+
+
+static void give_prompt(const char *prompt, bool show_default, const char *default_str, int default_int) {
+  printf("\n%s:\n", prompt);
+  if (show_default && default_str) {
+    printf("        [or ENTER to use \"%s\"]\n", default_str);
+  } else if (show_default && default_int) {
+    printf("        [or ENTER to use \"%d\"]\n", default_int);
+  }
+}
+
+
+static void update_config_option(config_t *config, const char *key, const char *prompt, bool allow_default) {
+  char response[MAX_CONFIG_VALUE_LENGTH];
+  get_response(response, MAX_CONFIG_VALUE_LENGTH);
+
+  if (streq(response, "") && !allow_default) {
+    // empty response not allowed as no default exists, so ask again
+    fprintf(stderr, "Please enter a response. ");
+    update_config_option(config, key, prompt, allow_default);
+  } else if (streq(response, "")) {
+    // use default (i.e. don't change value at dest)
+    printf("Using default.\n");
+  } else {
+    set_config_option(config, key, response);
+  }
+}
+
+static void update_config_option__str(config_t *config, const char *key, const char *prompt, char **dest) {
+  bool allow_default = *dest != NULL;
+  give_prompt(prompt, *dest != NULL, *dest, 0);
+  update_config_option(config, key, prompt, allow_default);
+}
+
+static void update_config_option__int(config_t *config, const char *key, const char *prompt, int prev_val) {
+  // use previous val as default if it's greater than -1
+  bool allow_default = prev_val >= 0;
+  give_prompt(prompt, allow_default, NULL, prev_val);
+  update_config_option(config, key, prompt, allow_default);
+}
+
 
 // take user input to populate the supplied config struct.
 //    if values already exist in config, the user will be able to leave these
 //    by entering an empty string for a new value
 static void get_config(config_t *config) {
 
+  // CONFIG_UPDATE
   for(int i = 0; i < CONFIG_OPTIONS_COUNT; i++) {
     char *key = config_format[i];
-    if (streq(key, "charge_low_webhook_url")) {
-      update_config_option(&config->charge_low_webhook_url,
-        "Enter URL of webhook to be activated when battery charge reaches LOWER threshold");
-    } else if (streq(key, "charge_high_webhook_url")) {
-      update_config_option(&config->charge_high_webhook_url,
-        "Enter URL of webhook to be activated when battery charge reaches UPPER threshold");
+    if (streq(key, "str_charge_low_webhook_url")) {
+      update_config_option__str(
+        config, key,
+        "Enter URL of webhook to be activated when battery charge reaches LOWER threshold",
+        &config->str_charge_low_webhook_url
+      );
+    } else if (streq(key, "str_charge_high_webhook_url")) {
+      update_config_option__str(
+        config, key,
+        "Enter URL of webhook to be activated when battery charge reaches UPPER threshold",
+        &config->str_charge_high_webhook_url
+      );
+    } else if (streq(key, "int_cycle_min_charge_percentage")) {
+      update_config_option__int(
+        config, key,
+        "Enter LOWER bound of charge cycle",
+        config->int_cycle_min_charge_percentage
+      );
+    } else if (streq(key, "int_cycle_max_charge_percentage")) {
+      update_config_option__int(
+        config, key,
+        "Enter UPPER bound of charge cycle",
+        config->int_cycle_max_charge_percentage
+      );
     }
 
   }
@@ -154,16 +236,18 @@ static void get_config(config_t *config) {
 
 // Function to write config to config_file
 // Pre: config_file points to START of file
-static void save_config(FILE *config_file, config_t *config) {
+void save_config(FILE *config_file, config_t *config) {
 
   //CONFIG_UPDATE
-  fprintf(config_file, "%s=%s;\n", "charge_low_webhook_url",
-                            config->charge_low_webhook_url);
-  fprintf(config_file, "%s=%s;\n", "charge_high_webhook_url",
-                            config->charge_high_webhook_url);
-
+  fprintf(config_file, "%s=%s;\n", "str_charge_low_webhook_url",
+                            config->str_charge_low_webhook_url);
+  fprintf(config_file, "%s=%s;\n", "str_charge_high_webhook_url",
+                            config->str_charge_high_webhook_url);
+  fprintf(config_file, "%s=%d;\n", "int_cycle_min_charge_percentage",
+                            config->int_cycle_min_charge_percentage);
+  fprintf(config_file, "%s=%d;\n", "int_cycle_max_charge_percentage",
+                            config->int_cycle_max_charge_percentage);
 }
-
 
 
 void init(config_t *config) {
@@ -206,12 +290,12 @@ void init(config_t *config) {
 
 
 
-// int main(int argc, char const *argv[]) {
-//
-//   config_t *config = alloc_config();
-//
-//   init(config);
-//
-//   free_config(config);
-//
-// }
+int main(int argc, char const *argv[]) {
+
+  config_t *config = alloc_config();
+
+  init(config);
+
+  free_config(config);
+
+}
