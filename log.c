@@ -18,6 +18,7 @@ void state_to_string(state_t state, char *string){
 static void update_sleep_count(time_t prev_time, int *sum, int *count){
   struct tm *prev = localtime(&prev_time);
   // tm_isdst returns -1 if information not available
+  // accounts for daylight saving
   if(prev->tm_isdst >= 0){
     prev->tm_hour -= prev->tm_isdst;                                                     
   }
@@ -70,9 +71,15 @@ void monitor_sleep_time(time_t current_time, battery_t *battery, FILE* analysis_
 void write_to_files(battery_t *battery, FILE* log_file, FILE* analysis_file, time_t current_time){
   char state_string[MAX_LINE_SIZE];
   state_to_string(battery->state, state_string);
-
+  struct tm *current = localtime(&current_time);
+  // tm_isdst returns -1 if information not available
+  // accounts for daylight saving
+  if(current->tm_isdst >= 0){
+    current->tm_hour -= current->tm_isdst;                                                     
+  }
+  
   // writes to text log
-  fprintf(log_file, "State: %s, Percentage: %d, Time: %s", state_string, battery->percentage, ctime(&current_time));
+  fprintf(log_file, "State: %s, Percentage: %d, Time: %s", state_string, battery->percentage, asctime(current));
   // writes to csv log
   fprintf(analysis_file, "%ld,%s,%d\n", current_time, state_string, battery->percentage);
 }
