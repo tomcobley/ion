@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Werror -Wall -g -std=c99 -pedantic
 LIBS = -lcurl
-OBJS = battery.o curl.o sys.o log.o
+OBJS = curl.o sys.o log.o battery.o 
 
 .PHONY = all clean
 

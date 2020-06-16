@@ -20,3 +20,17 @@ bool equal_int(int a, int b, char test_name[], test_state *state) {
   }  
   return success;
 } 
+
+bool check_battery(battery_t *battery, int percentage, state_t battery_state, char test_name[], test_state *state) {
+  bool success = check( battery->percentage == percentage && battery->state == battery_state, test_name, state);
+    if (!success) {
+      char state_str[MAX_LINE_SIZE];
+      state_to_string(battery_state, state_str);
+      char battery_state_str[MAX_LINE_SIZE];
+      state_to_string(battery->state, battery_state_str);
+      printf("            EXPECTED PERCENTAGE: %d, EXPECTED STATE: %s \n", percentage, state_str);
+    printf("                     BUT PERCENTAGE: %d\n", battery->percentage);
+    printf("                     AND STATE: %s\n", battery_state_str);
+  }  
+  return success;
+}
