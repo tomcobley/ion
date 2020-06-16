@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "battery.h"
 #include "curl.h"
-#include "log.h"
 
 battery_t *alloc_battery(void){
   battery_t *battery = calloc(1, sizeof(battery_t));

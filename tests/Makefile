@@ -21,7 +21,7 @@ battery.o: ../battery.c ../battery.h
 check.o: check.c check.h
 
 testreading: sys.o log.o battery.o check.o testreading.c
-	$(CC) -o testreading $(OBJS) $(CFLAGS) $(LIBS)
+	#$(CC) -o testreading $(OBJS) $(CFLAGS) $(LIBS)
 
 clean:
 	rm -f $(wildcard *.o)

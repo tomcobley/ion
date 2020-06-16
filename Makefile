@@ -13,9 +13,9 @@ sys.o: sys.c sys.h
 
 curl.o: curl.c curl.h
 
-battery.o: battery.c battery.h 
+battery.o: battery.c battery.h
 
-battery: battery.o curl.o sys.o log.o
+battery: battery.o curl.o sys.o log.o batterystate.h
 	$(CC) -o battery $(OBJS) $(CFLAGS) $(LIBS)
 
 clean:
