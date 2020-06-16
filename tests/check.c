@@ -41,9 +41,10 @@ bool equal_battery(battery_t *battery, int percentage, state_t battery_state, ch
 
 // platform dependent implementation, but works on mac and linux which are the only systems which will
 // run these tests
-bool check_file(char file_path[], char correct_file_path[], char test_name[], test_state *state) {
+bool equal_file(char file_path[], char correct_file_path[], char test_name[], test_state *state) {
   char system_command[strlen("diff ") + strlen(file_path) + strlen(" ")
 		      + strlen(correct_file_path) + strlen(" > ./temp/file_diff.txt") + 1];
+  system_command[0] = '\0';
   strcat(system_command, "diff ");
   strcat(system_command, file_path);
   strcat(system_command, " ");
@@ -76,7 +77,7 @@ bool check_file(char file_path[], char correct_file_path[], char test_name[], te
       perror("Failed to return to start of file");
     }
     
-    printf("            DIFFERENCES IN FILE: ");
+    printf("DIFFERENCES FOUND IN FILES: \n");
     char buffer[MAX_LINE_LENGTH + 1];
     while(fgets(buffer, MAX_LINE_LENGTH, file_diff)) {
       printf("%s", buffer);
