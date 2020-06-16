@@ -10,9 +10,8 @@ all: $(BUILD)
 runtests: all
 	./testreading
 	./testanalysis 
-	make clean
 
-testreading: ./testreading.c $(COMMON) 
+testreading: testreading.c $(COMMON) 
 
 testanalysis: testanalysis.c $(COMMON)
 
