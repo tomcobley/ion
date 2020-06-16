@@ -75,10 +75,9 @@ int main(int argc, char const *argv[]) {
   fclose(config_file);
 
 
-  printf("System configuration:\n");
+  printf("\nSystem configuration:\n");
   print_config(config);
-
-  fflush(stdout);
+  printf("\n");
 
 
   // allocate memory for the battery struct
@@ -103,7 +102,7 @@ int main(int argc, char const *argv[]) {
     perror("Failed to delete contents of temp");
   }
 
-  printf("Exit success\n");
+  printf("Exit Success.\n");
 
   return EXIT_SUCCESS;
 }
