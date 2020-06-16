@@ -5,6 +5,7 @@
 test_state struct_test_state;
 test_state *state = &struct_test_state;
 
+#ifdef DEBUG
 int main(void) {
 
   // *************** BEGIN TESTS ***************
@@ -38,10 +39,21 @@ int main(void) {
     perror("Failed to open linux input 3");
     exit(EXIT_FAILURE);
   }
-  read_battery_info__ubuntu(b2, linux_in3);
+  read_battery_info__ubuntu(b3, linux_in3);
   check_battery(b3, 25, DISCHARGING, "read_battery_info__ubuntu: percentage: 25%, state: discharging", state);
   free(b3);
   fclose(linux_in3);
+
+  battery_t *b4 = alloc_battery();
+  FILE *linux_in4 = fopen("./reading_tests/linux_4.txt", "r");
+  if (linux_in4 == NULL) {
+    perror("Failed to open linux input 4");
+    exit(EXIT_FAILURE);
+  }
+  read_battery_info__ubuntu(b4, linux_in4);
+  check_battery(b4, 100, DISCHARGING, "read_battery_info__ubuntu: percentage: 100%, state: discharging", state);
+  free(b4);
+  fclose(linux_in4);
 
 
   // *************** END OF TESTS ***************
@@ -49,5 +61,4 @@ int main(void) {
   printf("\n%d test(s) failed, %d test(s) passed\n", state->failures, state->successes);
   return EXIT_SUCCESS;
 }
-
-  
+#endif

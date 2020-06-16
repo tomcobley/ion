@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
-#include "log.h"
+#include "battery.h"
 
 void state_to_string(state_t state, char *string){
   switch (state) {

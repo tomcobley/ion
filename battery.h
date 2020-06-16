@@ -1,3 +1,6 @@
+#ifndef BATTERY_H
+#define BATTERY_H
+
 #include "sys.h"
 #include "log.h"
 #define SYSTEM_SUCCESS (0)
@@ -20,3 +23,5 @@
 
 
 battery_t *alloc_battery(void);
+
+#endif
