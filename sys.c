@@ -12,11 +12,11 @@ void read_battery_info__macos(battery_t *battery, FILE *batteryinfo);
 op_sys_t determine_os(void) {
   // determine operating system by compiler flags
   #if __APPLE__
-    printf("Apple OS detected\n");
+    printf("Apple OS detected.\n");
 	  // apple operating system
     return MACOS;
   #elif __linux__
-    printf("Linux OS detected\n");
+    printf("Linux OS detected.\n");
 	  // linux operating system
     return LINUX;
   #else
@@ -168,12 +168,10 @@ void read_battery_info__macos(battery_t *battery, FILE *batteryinfo) {
   // initiliase battery struct using information from system
   if (strcmp(status, "fully-charged") == 0 || strcmp(status, "charging") == 0) {
     update_battery(battery, CHARGING, percentage);
-  } else if (strcmp(status, "discharging") == 0) {
-    update_battery(battery, DISCHARGING, percentage);
   } else {
-    // TODO: handle error properly
-    perror("Could not read battery_status");
-    exit(EXIT_FAILURE);
+    // battery is either "discharging" or "AC attached; not charging"
+    //    so assume battery is discharging
+    update_battery(battery, DISCHARGING, percentage);
   }
 
 }
