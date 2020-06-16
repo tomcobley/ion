@@ -22,7 +22,7 @@ int main(void) {
   
   monitor_sleep_time(current_time, test_battery, test_file_1); 
   
-  equal_int(1020, test_battery->data->average_sleep_time, "log_battery_info: 7 standard sleep times", state);
+  equal_int(1020, test_battery->data->average_sleep_time, "7 standard sleep times", state);
   
   fclose(test_file_1);
   
@@ -32,12 +32,9 @@ int main(void) {
 
   FILE *test_file_2 = fopen("./analysis_tests/analysistest2.csv", "r");
   
-  // 16 June 09:30
-  current_time = 1592299800;
-  
   monitor_sleep_time(current_time, test_battery, test_file_2); 
   
-  equal_int(1020, test_battery->data->average_sleep_time, "log_battery_info: 7 standard sleep times", state);
+  equal_int(1020, test_battery->data->average_sleep_time, "7 standard sleep times + normal non-sleep usage", state);
   
   fclose(test_file_2);
   // TEST 3
@@ -45,26 +42,20 @@ int main(void) {
   
   FILE *test_file_3 = fopen("./analysis_tests/analysistest3.csv", "r");
   
-  // 16 June 09:30
-  current_time = 1592299800;
-  
   monitor_sleep_time(current_time, test_battery, test_file_3); 
   
-  equal_int(1020, test_battery->data->average_sleep_time, "log_battery_info: 7 standard sleep times", state);
+  equal_int(1056, test_battery->data->average_sleep_time, "7 standard sleep times + normal non-sleep usage + anomaly", state);
   
   fclose(test_file_3);
   // TEST 4
   // 7 standard sleep times + normal usage + anomaly as above, but including sleep
   // from before 7 day window to check they are not counted as sleep times
   
-  FILE *test_file_4 = fopen("./analysis_tests/analysistest1.csv", "r");
-  
-  // 16 June 09:30
-  current_time = 1592299800;
+  FILE *test_file_4 = fopen("./analysis_tests/analysistest4.csv", "r");
   
   monitor_sleep_time(current_time, test_battery, test_file_4); 
   
-  equal_int(1020, test_battery->data->average_sleep_time, "log_battery_info: 7 standard sleep times", state);
+  equal_int(1056, test_battery->data->average_sleep_time, "7 standard sleep times + normal non-sleep usage + anomaly + usage before 7 day window", state);
   
   fclose(test_file_4);
   
