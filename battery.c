@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+
 #include "battery.h"
 #include "curl.h"
+#include "config.h"
 
 battery_t *alloc_battery(void){
   battery_t *battery = calloc(1, sizeof(battery_t));
@@ -13,21 +15,52 @@ battery_t *alloc_battery(void){
   return battery;
 }
 
+
+// TODO: what's this?
 #ifndef DEBUG
-static void monitor_battery(battery_t *battery) {
-  if (battery->percentage <= CYCLE_LOWER_BOUND && battery->state != CHARGING) {
-    printf("Current battery level too low, switching plug on.\n");
-    post_to_webhook(POWER_ON);
-  } else if(battery->percentage >= CYCLE_UPPER_BOUND && battery->state != DISCHARGING) {
-    printf("Current battery level too high, switching plug off\n");
-    post_to_webhook(POWER_OFF);
+
+static void monitor_battery(battery_t *battery, config_t *config) {
+  if (battery->percentage <= config->int_cycle_min_charge_percentage) {
+    if (battery->state != CHARGING) {
+      printf("Current battery level below lower bound and device is not charging, so switching plug on.\n");
+      post_to_webhook(config->str_charge_low_webhook_url);
+    } else {
+      printf("Current battery level below lower bound but device is charging, so no action required.\n");
+    }
+  } else if(battery->percentage >= config->int_cycle_max_charge_percentage) {
+    if (battery->state != DISCHARGING) {
+      printf("Current battery level too high and device is charging, so switching plug off\n");
+      post_to_webhook(config->str_charge_high_webhook_url);
+    } else {
+      printf("Current battery level above upper bound but device is discharging, so no action required.\n");
+    }
   } else {
     printf("Battery within desired charge region, no action required.\n");
   }
-
 }
 
 int main(void) {
+
+  // allocate memory for config (settings) struct
+  config_t *config = alloc_config();
+
+  // read settings from config file and populate config
+  FILE *config_file = open_config_file("r");
+  if (!config_file || !read_config(config_file, config)) {
+    // failed to populate config from config_file. Either config_file doesn't
+    //    exist or is invalid. notify user and exit
+    fprintf(stderr,
+      "No valid .config file found. Please run '%s' to configure program. \n",
+      INIT_COMMAND
+    );
+    exit(EXIT_FAILURE);
+  }
+
+  // configuration was read successfully and saved to config, so close config_file
+  fclose(config_file);
+
+  printf("System configuration:\n");
+  print_config(config);
 
   // allocate memory for the battery struct
   battery_t *battery = alloc_battery();
@@ -40,7 +73,8 @@ int main(void) {
 
   log_battery_info(battery);
 
-  monitor_battery(battery);
+  // take action depending on state of battery and configuration settings
+  monitor_battery(battery, config);
 
   // free memory assigned to battery struct
   free(battery);

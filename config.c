@@ -9,6 +9,21 @@
 #include "config.h"
 
 
+//CONFIG_UPDATE
+// Note: the order of the config file must be identical to the order of the
+//    definition below,
+//    and CONFIG_OPTIONS_COUNT (from config.h) must represent the number of
+//    config options in the config_t typedef in config.h
+char *config_format[CONFIG_OPTIONS_COUNT] = {
+  "str_charge_low_webhook_url",
+  "str_charge_high_webhook_url",
+  "int_cycle_min_charge_percentage",
+  "int_cycle_max_charge_percentage"
+};
+
+
+
+
 // returns a pointer to a heap allocated struct of type config_t
 config_t *alloc_config(void) {
   config_t *config = malloc(sizeof(config_t));
@@ -109,7 +124,6 @@ void print_config(config_t *config) {
 // if successful, the config values will be saved to the supplied struct
 // Pre: config_file should point to the START of the file
 bool read_config(FILE *config_file, config_t *config) {
-
   int count = 0;
   char line_buffer[MAX_CONFIG_LINE_LENGTH + 1];
 
@@ -133,7 +147,6 @@ bool read_config(FILE *config_file, config_t *config) {
 
     count++;
   }
-
 
   if (count < CONFIG_OPTIONS_COUNT) {
     // not enough options specified, return false
@@ -249,6 +262,14 @@ void save_config(FILE *config_file, config_t *config) {
                             config->int_cycle_max_charge_percentage);
 }
 
+FILE *open_config_file(char *mode) {
+  FILE *fp = fopen(CONFIG_FILE_PATH, mode);
+  if (!fp && !streq(mode, "r")) {
+    perror("Failed to open/create config file. "); exit(EXIT_FAILURE);
+  }
+  return fp;
+}
+
 
 void init(config_t *config) {
 
@@ -256,7 +277,7 @@ void init(config_t *config) {
   printf("\n");
 
   // open config file for reading
-  FILE *config_file = fopen(CONFIG_FILE_PATH, "r");
+  FILE *config_file = open_config_file("r");
   if (config_file == NULL) {
     // no config file exists, output message
     printf("No .config file found. ");
@@ -275,15 +296,13 @@ void init(config_t *config) {
   printf("Configuration updated successfully.\n");
   //print_config(config);
 
-
   // reopen config file for writing (to overwrite current contents)
-  config_file = fopen(CONFIG_FILE_PATH, "w");
-  if (config_file == NULL) {
-    perror("Failed to open/create config file. "); exit(EXIT_FAILURE);
-  }
+  config_file = open_config_file("w");
 
   // write updated config to config file
   save_config(config_file, config);
+
+  fclose(config_file);
 
 }
 
