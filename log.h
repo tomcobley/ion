@@ -2,6 +2,7 @@
 #define LOG_H
 
 #include "batterystate.h"
+#include <stdio.h>
 #define DAY_IN_SECONDS (86400)
 #define HOUR_IN_SECONDS (3600)
 

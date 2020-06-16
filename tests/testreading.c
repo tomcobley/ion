@@ -19,7 +19,7 @@ int main(void) {
   }
   read_battery_info__ubuntu(b1, linux_in1);
   check_battery(b1, 50, CHARGING, "read_battery_info__ubuntu: percentage: 50%, state: charging", state);
-  free(b1);
+  free_battery(b1);
   fclose(linux_in1);
 
   battery_t *b2 = alloc_battery();
@@ -30,7 +30,7 @@ int main(void) {
   }
   read_battery_info__ubuntu(b2, linux_in2);
   check_battery(b2, 100, CHARGING, "read_battery_info__ubuntu: percentage: 100%, state: fully_charged", state);
-  free(b2);
+  free_battery(b2);
   fclose(linux_in2);
 
   battery_t *b3 = alloc_battery();
@@ -41,7 +41,7 @@ int main(void) {
   }
   read_battery_info__ubuntu(b3, linux_in3);
   check_battery(b3, 25, DISCHARGING, "read_battery_info__ubuntu: percentage: 25%, state: discharging", state);
-  free(b3);
+  free_battery(b3);
   fclose(linux_in3);
 
   battery_t *b4 = alloc_battery();
@@ -52,9 +52,13 @@ int main(void) {
   }
   read_battery_info__ubuntu(b4, linux_in4);
   check_battery(b4, 100, DISCHARGING, "read_battery_info__ubuntu: percentage: 100%, state: discharging", state);
-  free(b4);
+  free_battery(b4);
   fclose(linux_in4);
 
+
+  // TODO: ADD MACOS READING FILES
+
+  check_file("./reading_tests/linux_3.txt", "./reading_tests/linux_4.txt", "test, remove after", state);
 
   // *************** END OF TESTS ***************
 

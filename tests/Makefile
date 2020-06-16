@@ -1,5 +1,5 @@
 CC      = gcc
-CFLAGS  = -Wall -g -D_POSIX_SOURCE -std=c99 -Werror -pedantic -DDEBUG
+CFLAGS  = -Werror -Wall -g -std=c99 -pedantic -DDEBUG
 BUILD   = testreading
 COMMON  = ../battery.c ../battery.h check.c check.h ../log.c ../log.h ../batterystate.h ../sys.c ../sys.h
 
@@ -11,7 +11,7 @@ runtests: all
 	./testreading
 	make clean
 
-testreading: testreading.c $(COMMON) 
+testreading: ./testreading.c $(COMMON) 
 
 clean:
 	rm -f *.o

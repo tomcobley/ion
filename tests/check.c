@@ -1,4 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
 #include "check.h"
+#include "string.h"
+#define MAX_LINE_LENGTH 1023
 
 bool check(bool truth_value, char test_name[], test_state *state) {
   printf( truth_value ? "/ - PASS" : "X - FAIL" );
@@ -29,8 +33,57 @@ bool check_battery(battery_t *battery, int percentage, state_t battery_state, ch
       char battery_state_str[MAX_LINE_SIZE];
       state_to_string(battery->state, battery_state_str);
       printf("            EXPECTED PERCENTAGE: %d, EXPECTED STATE: %s \n", percentage, state_str);
-    printf("                     BUT PERCENTAGE: %d\n", battery->percentage);
-    printf("                     AND STATE: %s\n", battery_state_str);
+      printf("                 BUT PERCENTAGE: %d\n", battery->percentage);
+      printf("                      AND STATE: %s\n", battery_state_str);
   }  
+  return success;
+}
+
+// platform dependent implementation, but works on mac and linux which are the only systems which will
+// run these tests
+bool check_file(char file_path[], char correct_file_path[], char test_name[], test_state *state) {
+  char system_command[strlen("diff ") + strlen(file_path) + strlen(" ")
+		      + strlen(correct_file_path) + strlen(" > ./temp/file_diff.txt") + 1];
+  strcat(system_command, "diff ");
+  strcat(system_command, file_path);
+  strcat(system_command, " ");
+  strcat(system_command, correct_file_path);
+  strcat(system_command, " > ./temp/file_diff.txt");
+  
+  if (system(system_command) == -1) {
+    perror("System call to diff failed");
+    exit(EXIT_FAILURE);
+  }
+  
+  FILE *file_diff = fopen("./temp/file_diff.txt", "r");
+
+  if (file_diff == NULL) {
+    perror("Failed to open differences file");
+    exit(EXIT_FAILURE);
+  }
+
+  if (fseek(file_diff, 0, SEEK_END) != 0) {
+    perror("Failed to return to end of file");
+  }
+  
+  int file_size = ftell(file_diff);
+
+  bool success = check ( file_size == 0, test_name, state);
+
+  if (!success) {
+    
+    if (fseek(file_diff, 0, SEEK_SET) != 0) {
+      perror("Failed to return to start of file");
+    }
+    
+    printf("            DIFFERENCES IN FILE: ");
+    char buffer[MAX_LINE_LENGTH + 1];
+    while(fgets(buffer, MAX_LINE_LENGTH, file_diff)) {
+      printf("%s", buffer);
+    }
+  }
+
+  fclose(file_diff);
+
   return success;
 }
