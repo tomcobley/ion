@@ -12,26 +12,34 @@ battery_t *alloc_battery(void){
     perror("Failed to allocate memory for battery");
     exit(EXIT_FAILURE);
   }
+  battery->data = calloc(1, sizeof(battery_data_t));
   return battery;
 }
 
+void free_battery(battery_t *battery){
+  free(battery->data);
+  free(battery);
+}
 
 // TODO: what's this?
 #ifndef DEBUG
 
 
+
 static void monitor_battery(battery_t *battery, config_t *config) {
   if (battery->percentage <= config->int_cycle_min_charge_percentage) {
-    if (battery->state != CHARGING) {
-      printf("Current battery level below lower bound and device is not charging, so switching plug on.\n");
+    if (battery->state == DISCHARGING) {
+      printf("Current battery level below lower bound and device is discharging, so switching plug on.\n");
       post_to_webhook(config->str_charge_low_webhook_url);
     } else {
       printf("Current battery level below lower bound but device is charging, so no action required.\n");
     }
   } else if(battery->percentage >= config->int_cycle_max_charge_percentage) {
-    if (battery->state != DISCHARGING) {
+    if (battery->state == CHARGING && !battery->data->pre_sleep) {
       printf("Current battery level too high and device is charging, so switching plug off\n");
       post_to_webhook(config->str_charge_high_webhook_url);
+    } else if (battery->state == CHARGING && battery->data->pre_sleep) {
+      printf("Current battery level high and device is charging, but pre_sleep detected so no action taken\n");
     } else {
       printf("Current battery level above upper bound but device is discharging, so no action required.\n");
     }
@@ -82,13 +90,14 @@ int main(int argc, char const *argv[]) {
   // determine battery percentage and state, save information to battery
   read_battery_info(battery, op_sys);
 
+  // log battery percentage and state for sleep time analysis
   log_battery_info(battery);
 
-  // take action depending on state of battery and configuration settings
+  // perform post to webhook depending on state of battery and configuration settings
   monitor_battery(battery, config);
 
   // free memory assigned to battery struct
-  free(battery);
+  free_battery(battery);
 
   if (system(DELETE_TEMP_CONTENTS) != SYSTEM_SUCCESS) {
     perror("Failed to delete contents of temp");

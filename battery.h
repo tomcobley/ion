@@ -18,7 +18,7 @@
 #define BATTERY_LOG_PATH ("./log/batterylog.txt")
 #define BATTERY_ANALYSIS_PATH ("./log/batteryanalysis.csv")
 
-
+void free_battery(battery_t *battery);
 battery_t *alloc_battery(void);
 
 #endif
