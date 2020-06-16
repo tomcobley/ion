@@ -65,6 +65,16 @@ void monitor_sleep_time(time_t current_time, battery_t *battery, FILE* analysis_
   }
 }
 
+void write_to_files(battery_t *battery, FILE* log_file, FILE* analysis_file, time_t current_time){
+  char state_string[MAX_LINE_SIZE];
+  state_to_string(battery->state, state_string);
+
+  // writes to text log
+  fprintf(log_file, "State: %s, Percentage: %d, Time: %s", state_string, battery->percentage, ctime(&current_time));
+  // writes to csv log
+  fprintf(analysis_file, "%ld,%s,%d\n", current_time, state_string, battery->percentage);
+}
+
 void log_battery_info(battery_t *battery){
   FILE *log_file = fopen(BATTERY_LOG_PATH, "a");
   if(log_file == NULL){
@@ -77,19 +87,14 @@ void log_battery_info(battery_t *battery){
     perror("Failed to open battery analysis file");
     exit(EXIT_FAILURE);
   }
-  char state_string[MAX_LINE_SIZE];
-  // converts enum into string representation
-  state_to_string(battery->state, state_string);
 
-  // calculates current time in second past 01/01/1970
+  // calculates current time in seconds past 01/01/1970
   time_t current_time = time(NULL);
-
-  fprintf(log_file, "State: %s, Percentage: %d, Time: %s", state_string, battery->percentage, ctime(&current_time));
 
   monitor_sleep_time(current_time, battery, analysis_file); 
 
-  fprintf(analysis_file, "%ld,%s,%d\n", current_time, state_string, battery->percentage);
-  
+  write_to_files(battery, log_file, analysis_file, current_time);
+   
   if(fclose(log_file) != 0){
     perror("Failed to close battery log file");
     exit(EXIT_FAILURE);
