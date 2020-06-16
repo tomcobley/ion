@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <assert.h>
 
-#include "init.h"
+#include "config.h"
 
 
 // returns a pointer to a heap allocated struct of type config_t
@@ -34,7 +34,7 @@ static void populate_string(char **dest_ptr, const char *src, int max_length) {
 
 // set the value of the config option corresponding to the supplied key
 //    if the struct member is not initialised, allocate memory for it
-static void set_config_option(config_t *config, char *key, char *value) {
+void set_config_option(config_t *config, char *key, char *value) {
   //CONFIG_UPDATE
   if (streq(key, "charge_low_webhook_url")) {
     populate_string(&config->charge_low_webhook_url, value, MAX_CONFIG_VALUE_LENGTH);
@@ -152,9 +152,9 @@ static void get_config(config_t *config) {
 }
 
 
-
-// Function to write
-static void write_config_file(FILE *config_file, config_t *config) {
+// Function to write config to config_file
+// Pre: config_file points to START of file
+static void save_config(FILE *config_file, config_t *config) {
 
   //CONFIG_UPDATE
   fprintf(config_file, "%s=%s;\n", "charge_low_webhook_url",
@@ -199,19 +199,19 @@ void init(config_t *config) {
   }
 
   // write updated config to config file
-  write_config_file(config_file, config);
+  save_config(config_file, config);
 
 }
 
 
 
 
-int main(int argc, char const *argv[]) {
-
-  config_t *config = alloc_config();
-
-  init(config);
-
-  free_config(config);
-
-}
+// int main(int argc, char const *argv[]) {
+//
+//   config_t *config = alloc_config();
+//
+//   init(config);
+//
+//   free_config(config);
+//
+// }

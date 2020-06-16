@@ -39,3 +39,5 @@ void print_config(config_t *config);
 bool read_config(FILE *config_file, config_t *config);
 
 void init(config_t *config);
+
+void set_config_option(config_t *config, char *key, char *value);
