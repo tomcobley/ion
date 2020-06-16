@@ -288,14 +288,9 @@ void init(config_t *config) {
 }
 
 
-
-
-int main(int argc, char const *argv[]) {
-
-  config_t *config = alloc_config();
-
-  init(config);
-
-  free_config(config);
-
-}
+// TODO: remove commented out code
+// int main(int argc, char const *argv[]) {
+//   config_t *config = alloc_config();
+//   init(config);
+//   free_config(config);
+// }
