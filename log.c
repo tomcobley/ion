@@ -16,13 +16,16 @@ void state_to_string(state_t state, char *string){
 }
 
 void monitor_sleep_time(time_t current_time, battery_t *battery, FILE* analysis_file){
-  // stores time of previous line in csv file
-  time_t prev_time = current_time;
 
   // sum of 7 days previous sleep times stored in minutes past midnight
   int sum_sleep_time = 0;
   int number_of_sleeps = 0;
+
   char buff[MAX_LINE_SIZE + 1];
+  
+  // stores time of previous line in csv file
+  time_t prev_time = current_time;
+
   while (fgets(buff, MAX_LINE_SIZE, analysis_file)){
     time_t temp_time = atol(buff);
     // only stores if within 7 days
@@ -38,12 +41,20 @@ void monitor_sleep_time(time_t current_time, battery_t *battery, FILE* analysis_
     prev_time = temp_time;
     }
   }
+
+  // checks if final line of csv is also a sleep time
+  if(prev_time < (current_time - 4 * HOUR_IN_SECONDS)){
+    struct tm *prev = localtime(&prev_time);                                                               
+    sum_sleep_time += prev->tm_hour * 60 + prev->tm_min;                    
+    number_of_sleeps ++;
+  }
+
   if(number_of_sleeps > 0){
     int average_sleep_time = sum_sleep_time / number_of_sleeps;
     battery->data->average_sleep_time = average_sleep_time;
     printf("Average sleep time = %d in minutes past midnight.\n",average_sleep_time);
     struct tm *current = localtime(&current_time);
-    // checks if current time is within 20 minute window
+    // checks if current time is within 30 minute window
     if(average_sleep_time - (current->tm_hour*60 + current->tm_min) < 30){
    	  battery->data->pre_sleep = true;
     }
