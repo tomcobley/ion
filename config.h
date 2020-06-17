@@ -27,16 +27,14 @@
 
 //CONFIG_UPDATE
 typedef struct config {
-  char *str_charge_low_webhook_url;
-  char *str_charge_high_webhook_url;
-  int int_cycle_min_charge_percentage;
-  int int_cycle_max_charge_percentage;
+    char *str_charge_low_webhook_url;
+    char *str_charge_high_webhook_url;
+    int int_cycle_min_charge_percentage;
+    int int_cycle_max_charge_percentage;
 } config_t;
 
 //CONFIG_UPDATE
 #define CONFIG_OPTIONS_COUNT (4)
-
-
 
 config_t *alloc_config(void);
 

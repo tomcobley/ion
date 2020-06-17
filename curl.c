@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <curl/curl.h>
 #include "./curl.h"
 
-void post_to_webhook(char* dest_url){
+CURLcode post_to_webhook(char *dest_url) {
 
   CURL *curl;
   CURLcode res_code;
@@ -13,7 +12,7 @@ void post_to_webhook(char* dest_url){
 
   // obtain curl handle
   curl = curl_easy_init();
-  if(curl != NULL) {
+  if (curl != NULL) {
     // set destination for curl
     curl_easy_setopt(curl, CURLOPT_URL, dest_url);
 
@@ -23,7 +22,7 @@ void post_to_webhook(char* dest_url){
     printf("\n");
 
     // checks for errors
-    if(res_code != CURLE_OK)
+    if (res_code != CURLE_OK)
       fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res_code));
 
     // frees curl handle created by curl_easy_init
@@ -34,4 +33,5 @@ void post_to_webhook(char* dest_url){
   }
   // frees program environment created by curl_global_init
   curl_global_cleanup();
+  return res_code;
 }

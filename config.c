@@ -15,20 +15,19 @@
 //    and CONFIG_OPTIONS_COUNT (from config.h) must represent the number of
 //    config options in the config_t typedef in config.h
 char *config_format[CONFIG_OPTIONS_COUNT] = {
-  "str_charge_low_webhook_url",
-  "str_charge_high_webhook_url",
-  "int_cycle_min_charge_percentage",
-  "int_cycle_max_charge_percentage"
+        "str_charge_low_webhook_url",
+        "str_charge_high_webhook_url",
+        "int_cycle_min_charge_percentage",
+        "int_cycle_max_charge_percentage"
 };
-
-
 
 
 // returns a pointer to a heap allocated struct of type config_t
 config_t *alloc_config(void) {
   config_t *config = malloc(sizeof(config_t));
   if (!config) {
-    perror("Memory allocation failed for config. "); exit(EXIT_FAILURE);
+    perror("Memory allocation failed for config. ");
+    exit(EXIT_FAILURE);
   }
   //CONFIG_UPDATE
   config->str_charge_low_webhook_url = NULL;
@@ -56,7 +55,8 @@ static void populate_string(char **dest_ptr, const char *src, int max_length) {
   if (!*dest_ptr) { *dest_ptr = malloc(max_length); }
   if (!*dest_ptr) {
     // if *dest_ptr is still NULL
-    perror("Memory allocation failed. "); exit(EXIT_FAILURE);
+    perror("Memory allocation failed. ");
+    exit(EXIT_FAILURE);
   }
   assert(src != NULL);
   strncpy(*dest_ptr, src, max_length);
@@ -75,7 +75,10 @@ void set_config_option(config_t *config, const char *key, const char *value) {
     // key is of int type
     use_int = true;
     value_int = strtol(value, NULL, 10);
-    if (errno == EINVAL) { perror("Failed to convert str to int. "); exit(EXIT_FAILURE); }
+    if (errno == EINVAL) {
+      perror("Failed to convert str to int. ");
+      exit(EXIT_FAILURE);
+    }
   }
 
   //CONFIG_UPDATE
@@ -93,11 +96,9 @@ void set_config_option(config_t *config, const char *key, const char *value) {
     assert(use_int);
     check_percentage(value_int);
     config->int_cycle_max_charge_percentage = value_int;
-  }
-
-  else {
-    // TODO:
-    assert(false);
+  } else {
+    perror("Unrecognised config key.");
+    exit(EXIT_FAILURE);
   }
 }
 
@@ -166,7 +167,10 @@ static void get_response(char *dest, int max_length) {
 
   // remove any trailing '\n's from dest
   for (int i = 0; dest[i]; i++) {
-    if (dest[i] == '\n') { dest[i] = '\0'; break; }
+    if (dest[i] == '\n') {
+      dest[i] = '\0';
+      break;
+    }
   }
 }
 
@@ -217,33 +221,31 @@ static void update_config_option__int(config_t *config, const char *key, const c
 static void get_config(config_t *config) {
 
   // CONFIG_UPDATE
-  for(int i = 0; i < CONFIG_OPTIONS_COUNT; i++) {
+  for (int i = 0; i < CONFIG_OPTIONS_COUNT; i++) {
     char *key = config_format[i];
     if (streq(key, "str_charge_low_webhook_url")) {
       update_config_option__str(
-        config, key,
-        "Enter URL of webhook to be activated when battery charge reaches LOWER threshold",
-        &config->str_charge_low_webhook_url
+              config, key,
+              "Enter URL of webhook to be activated when battery charge reaches LOWER threshold",
+              &config->str_charge_low_webhook_url
       );
     } else if (streq(key, "str_charge_high_webhook_url")) {
       update_config_option__str(
-        config, key,
-        "Enter URL of webhook to be activated when battery charge reaches UPPER threshold",
-        &config->str_charge_high_webhook_url
+              config, key,
+              "Enter URL of webhook to be activated when battery charge reaches UPPER threshold",
+              &config->str_charge_high_webhook_url
       );
     } else if (streq(key, "int_cycle_min_charge_percentage")) {
       update_config_option__int(
-        config, key,
-        // TODO: add recommended value
-        "Enter LOWER bound percentage of charge cycle (recommended value: "RECOMMENDED_MIN_CHARGE")",
-        config->int_cycle_min_charge_percentage
+              config, key,
+              "Enter LOWER bound percentage of charge cycle (recommended value: "RECOMMENDED_MIN_CHARGE")",
+              config->int_cycle_min_charge_percentage
       );
     } else if (streq(key, "int_cycle_max_charge_percentage")) {
       update_config_option__int(
-        config, key,
-        // TODO: add recommended value
-        "Enter UPPER bound percentage of charge cycle (recommended value: "RECOMMENDED_MAX_CHARGE")",
-        config->int_cycle_max_charge_percentage
+              config, key,
+              "Enter UPPER bound percentage of charge cycle (recommended value: "RECOMMENDED_MAX_CHARGE")",
+              config->int_cycle_max_charge_percentage
       );
     }
 
@@ -257,19 +259,20 @@ void save_config(FILE *config_file, config_t *config) {
 
   //CONFIG_UPDATE
   fprintf(config_file, "%s=%s;\n", "str_charge_low_webhook_url",
-                            config->str_charge_low_webhook_url);
+          config->str_charge_low_webhook_url);
   fprintf(config_file, "%s=%s;\n", "str_charge_high_webhook_url",
-                            config->str_charge_high_webhook_url);
+          config->str_charge_high_webhook_url);
   fprintf(config_file, "%s=%d;\n", "int_cycle_min_charge_percentage",
-                            config->int_cycle_min_charge_percentage);
+          config->int_cycle_min_charge_percentage);
   fprintf(config_file, "%s=%d;\n", "int_cycle_max_charge_percentage",
-                            config->int_cycle_max_charge_percentage);
+          config->int_cycle_max_charge_percentage);
 }
 
 FILE *open_config_file(char *mode) {
   FILE *fp = fopen(CONFIG_FILE_PATH, mode);
   if (!fp && !streq(mode, "r")) {
-    perror("Failed to open/create config file. "); exit(EXIT_FAILURE);
+    perror("Failed to open/create config file. ");
+    exit(EXIT_FAILURE);
   }
   return fp;
 }
@@ -309,11 +312,3 @@ void init(void) {
   fclose(config_file);
 
 }
-
-
-// TODO: remove commented out code
-// int main(int argc, char const *argv[]) {
-//   config_t *config = alloc_config();
-//   init(config);
-//   free_config(config);
-// }

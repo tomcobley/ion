@@ -3,9 +3,10 @@
 
 #include "sys.h"
 #include "log.h"
+#include "./curl.h"
+
 #define SYSTEM_SUCCESS (0)
-// TODO: change MAX_LINE_SIZE to something more meaningful
-#define MAX_LINE_SIZE (1023)
+#define MAX_BUFFER_SIZE (1023)
 
 
 #define BATTERY_INFO__MACOS ("pmset -g batt > ./temp/batteryinfo.txt")
@@ -19,6 +20,7 @@
 #define BATTERY_ANALYSIS_PATH ("./log/batteryanalysis.csv")
 
 void free_battery(battery_t *battery);
+
 battery_t *alloc_battery(void);
 
 #endif

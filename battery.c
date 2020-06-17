@@ -3,12 +3,11 @@
 #include <stdlib.h>
 
 #include "battery.h"
-#include "curl.h"
 #include "config.h"
 
-battery_t *alloc_battery(void){
+battery_t *alloc_battery(void) {
   battery_t *battery = calloc(1, sizeof(battery_t));
-  if(battery == NULL){
+  if (battery == NULL) {
     perror("Failed to allocate memory for battery");
     exit(EXIT_FAILURE);
   }
@@ -16,14 +15,12 @@ battery_t *alloc_battery(void){
   return battery;
 }
 
-void free_battery(battery_t *battery){
+void free_battery(battery_t *battery) {
   free(battery->data);
   free(battery);
 }
 
-// TODO: what's this?
 #ifndef DEBUG
-
 
 
 static void monitor_battery(battery_t *battery, config_t *config) {
@@ -34,7 +31,7 @@ static void monitor_battery(battery_t *battery, config_t *config) {
     } else {
       printf("Current battery level below lower bound but device is charging, so no action required.\n");
     }
-  } else if(battery->percentage >= config->int_cycle_max_charge_percentage) {
+  } else if (battery->percentage >= config->int_cycle_max_charge_percentage) {
     if (battery->state == CHARGING && !battery->data->pre_sleep) {
       printf("Current battery level too high and device is charging, so switching plug off\n");
       post_to_webhook(config->str_charge_high_webhook_url);
@@ -65,8 +62,8 @@ int main(int argc, char const *argv[]) {
     // failed to populate config from config_file. Either config_file doesn't
     //    exist or is invalid. notify user and exit
     fprintf(stderr,
-      "No valid .config file found. Please run '%s' to configure program. \n",
-      INIT_COMMAND
+            "No valid .config file found. Please run '%s' to configure program. \n",
+            INIT_COMMAND
     );
     exit(EXIT_FAILURE);
   }
@@ -106,4 +103,5 @@ int main(int argc, char const *argv[]) {
 
   return EXIT_SUCCESS;
 }
+
 #endif

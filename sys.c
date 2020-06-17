@@ -6,24 +6,24 @@
 #include "battery.h"
 
 void read_battery_info__ubuntu(battery_t *battery, FILE *batteryinfo);
+
 void read_battery_info__macos(battery_t *battery, FILE *batteryinfo);
 
 
 op_sys_t determine_os(void) {
   // determine operating system by compiler flags
-  #if __APPLE__
-    printf("Apple OS detected.\n");
-	  // apple operating system
-    return MACOS;
-  #elif __linux__
-    printf("Linux OS detected.\n");
-	  // linux operating system
-    return LINUX;
-  #else
-    // TODO: handle error more gracefully
-    perror("Unsupported operating system. ");
-    exit(EXIT_FAILURE);
-  #endif
+#if __APPLE__
+  printf("Apple OS detected.\n");
+  // apple operating system
+  return MACOS;
+#elif __linux__
+  printf("Linux OS detected.\n");
+  // linux operating system
+  return LINUX;
+#else
+  perror("Unsupported operating system.");
+  exit(EXIT_FAILURE);
+#endif
 }
 
 void read_battery_info(battery_t *battery, op_sys_t op_sys) {
@@ -35,8 +35,8 @@ void read_battery_info(battery_t *battery, op_sys_t op_sys) {
   } else if (op_sys == MACOS) {
     info_status = system(BATTERY_INFO__MACOS);
   } else {
-    // TODO: error
-    assert(0);
+    perror("Unsupported operating sytem.");
+    exit(EXIT_FAILURE);
   }
 
   if (info_status != SYSTEM_SUCCESS) {
@@ -50,9 +50,11 @@ void read_battery_info(battery_t *battery, op_sys_t op_sys) {
     exit(EXIT_FAILURE);
   }
 
-  // TODO: check for EMPTY file (in case of no access to battery, test on lab machines)
-  //    Note: if temp file did not exist before, no file will be created when there is no access to batt
-  //                    ^^ NOT SURE THIS IS ACTUALLY TRUE
+  // if file is empty then device does not have battery/access to battery failed
+  if (ftell(batteryinfo) == 0) {
+    perror("Failed to access battery or device does not have a battery");
+    exit(EXIT_FAILURE);
+  }
 
   // TODO: use function pointer instead
   if (op_sys == LINUX) {
@@ -61,26 +63,29 @@ void read_battery_info(battery_t *battery, op_sys_t op_sys) {
     read_battery_info__macos(battery, batteryinfo);
   }
 
-  if(fclose(batteryinfo) != 0){
+  if (fclose(batteryinfo) != 0) {
     perror("Failed to close battery information file");
     exit(EXIT_FAILURE);
   }
 }
 
 static void update_battery(battery_t *battery, state_t state, int percentage) {
-  // TODO: handle errors properly
-  assert(percentage >= 0 && percentage <= 100);
-  assert(state == CHARGING || state == DISCHARGING);
+  if (percentage < 0 || percentage > 100) {
+    perror("Invalid percentage passed as parameter to update battery");
+    exit(EXIT_FAILURE);
+  }
+  if (state != CHARGING && state != DISCHARGING) {
+    perror("Invalid state passed as parameter to update battery");
+    exit(EXIT_FAILURE);
+  }
   battery->state = state;
   battery->percentage = percentage;
 }
 
 
 static char *skip_white_space(char *str) {
-  // TODO: remove unneccessary ptr variable?
-  char *ptr = str;
-  while (*ptr == ' ') { ptr++; }
-  return ptr;
+  while(*str == ' '){str++;}
+  return str;
 }
 
 
@@ -89,11 +94,11 @@ static char *skip_white_space(char *str) {
 
 
 void read_battery_info__ubuntu(battery_t *battery, FILE *batteryinfo) {
-  char buff[MAX_LINE_SIZE + 1];
-  char status[MAX_LINE_SIZE + 1];
+  char buff[MAX_BUFFER_SIZE + 1];
+  char status[MAX_BUFFER_SIZE + 1];
   int percentage = -1;
 
-  while (fgets(buff, MAX_LINE_SIZE, batteryinfo)) {
+  while (fgets(buff, MAX_BUFFER_SIZE, batteryinfo)) {
     // get ptr to label of this line
     char *label_ptr = skip_white_space(buff);
     strtok(label_ptr, ":");
@@ -103,7 +108,7 @@ void read_battery_info__ubuntu(battery_t *battery, FILE *batteryinfo) {
     info_ptr = strtok(NULL, "\n");
     info_ptr = skip_white_space(info_ptr);
 
-    if(strcmp(label_ptr, "state") == 0){
+    if (strcmp(label_ptr, "state") == 0) {
       strcpy(status, info_ptr);
     } else {
       percentage = strtol(info_ptr, NULL, 10);
@@ -111,7 +116,8 @@ void read_battery_info__ubuntu(battery_t *battery, FILE *batteryinfo) {
   }
 
   if (percentage == -1) {
-    // TODO: handle error
+    perror("Failed to parse percentage in read_battery_info__linux");
+    exit(EXIT_FAILURE);
   }
 
   // initiliase battery struct using information from system
@@ -120,8 +126,7 @@ void read_battery_info__ubuntu(battery_t *battery, FILE *batteryinfo) {
   } else if (strcmp(status, "discharging") == 0) {
     update_battery(battery, DISCHARGING, percentage);
   } else {
-    // TODO: handle error properly
-    perror("Could not read battery_status");
+    perror("Could not read battery status");
     exit(EXIT_FAILURE);
   }
 
@@ -135,15 +140,14 @@ void read_battery_info__ubuntu(battery_t *battery, FILE *batteryinfo) {
 
 
 void read_battery_info__macos(battery_t *battery, FILE *batteryinfo) {
-  char buff[MAX_LINE_SIZE + 1];
+  char buff[MAX_BUFFER_SIZE + 1];
   int percentage = -1;
-  // TODO: change size of buffer for status to be lower
-  char status[MAX_LINE_SIZE + 1];
+  char status[MAX_BUFFER_SIZE + 1];
 
   // disregard first line of file, store second line (which will contain
   //    the relevant data into buff
-  fgets(buff, MAX_LINE_SIZE, batteryinfo);
-  fgets(buff, MAX_LINE_SIZE, batteryinfo);
+  fgets(buff, MAX_BUFFER_SIZE, batteryinfo);
+  fgets(buff, MAX_BUFFER_SIZE, batteryinfo);
 
   char *str_ptr = buff;
   for (; *str_ptr; str_ptr++) {
@@ -156,7 +160,8 @@ void read_battery_info__macos(battery_t *battery, FILE *batteryinfo) {
   }
 
   if (percentage == -1) {
-    // TODO: handle error
+    perror("Failed to parse percentage in read_battery_info__macos");
+    exit(EXIT_FAILURE);
   }
 
   // (strptr + 2) represents start of state field, which contains leading
