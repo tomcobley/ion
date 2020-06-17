@@ -235,14 +235,14 @@ static void get_config(config_t *config) {
       update_config_option__int(
         config, key,
         // TODO: add recommended value
-        "Enter LOWER bound percentage of charge cycle",
+        "Enter LOWER bound percentage of charge cycle (recommended value: "RECOMMENDED_MIN_CHARGE")",
         config->int_cycle_min_charge_percentage
       );
     } else if (streq(key, "int_cycle_max_charge_percentage")) {
       update_config_option__int(
         config, key,
-        // TODO: add recommended value 
-        "Enter UPPER bound percentage of charge cycle",
+        // TODO: add recommended value
+        "Enter UPPER bound percentage of charge cycle (recommended value: "RECOMMENDED_MAX_CHARGE")",
         config->int_cycle_max_charge_percentage
       );
     }
