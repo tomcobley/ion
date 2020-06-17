@@ -1,24 +1,17 @@
-CC = gcc
-CFLAGS = -Wall -g -std=c99 -pedantic
-LIBS = -lcurl
-OBJS = curl.o sys.o log.o battery.o config.o
+CC 	= gcc
+CFLAGS  = -Wall -g -std=c99 -pedantic
+LIBS 	= -lcurl
+OBJS 	= curl.c sys.c log.c battery.c config.c
+TARGETS = battery
 
 .PHONY = all clean
 
-all: battery
+all: $(TARGETS)
 
-config.o: config.c config.h
-
-log.o: log.c log.h
-
-sys.o: sys.c sys.h
-
-curl.o: curl.c curl.h
-
-battery.o: battery.c battery.h
-
-battery: battery.o curl.o sys.o log.o batterystate.h config.o
-	$(CC) -o battery $(OBJS) $(CFLAGS) $(LIBS)
+battery: $(OBJS)
+	$(CC) $(OBJS) $(CFLAGS) -o battery $(LIBS)
 
 clean:
-	rm -f *.o battery
+	rm -f *.o $(TARGETS)
+	cd temp && rm -f *
+
