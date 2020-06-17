@@ -30,7 +30,7 @@ config_t *alloc_config(void) {
   if (!config) {
     perror("Memory allocation failed for config. "); exit(EXIT_FAILURE);
   }
-  //CONFIG_UPDATE 
+  //CONFIG_UPDATE
   config->str_charge_low_webhook_url = NULL;
   config->str_charge_high_webhook_url = NULL;
   config->int_cycle_min_charge_percentage = -1;
@@ -234,13 +234,15 @@ static void get_config(config_t *config) {
     } else if (streq(key, "int_cycle_min_charge_percentage")) {
       update_config_option__int(
         config, key,
-        "Enter LOWER bound of charge cycle",
+        // TODO: add recommended value
+        "Enter LOWER bound percentage of charge cycle",
         config->int_cycle_min_charge_percentage
       );
     } else if (streq(key, "int_cycle_max_charge_percentage")) {
       update_config_option__int(
         config, key,
-        "Enter UPPER bound of charge cycle",
+        // TODO: add recommended value 
+        "Enter UPPER bound percentage of charge cycle",
         config->int_cycle_max_charge_percentage
       );
     }
