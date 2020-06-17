@@ -4,11 +4,11 @@
 #include "./curl.h"
 
 void post_to_webhook(char* dest_url){
-  
+
   CURL *curl;
   CURLcode res_code;
 
-  // sets up program environment that libcurl needs 
+  // sets up program environment that libcurl needs
   curl_global_init(CURL_GLOBAL_ALL);
 
   // obtain curl handle
@@ -18,10 +18,10 @@ void post_to_webhook(char* dest_url){
     curl_easy_setopt(curl, CURLOPT_URL, dest_url);
 
     // perform request
-    printf("Performing request. Output:\n    ");
+    printf("Sending POST request to \"%s\". Response:\n    ", dest_url);
     res_code = curl_easy_perform(curl);
     printf("\n");
-    
+
     // checks for errors
     if(res_code != CURLE_OK)
       fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res_code));
