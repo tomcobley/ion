@@ -14,16 +14,19 @@ void state_to_string(state_t state, char *string){
     exit(EXIT_FAILURE);
   }
 }
+
 static void update_sleep_count(time_t prev_time, int *sum, int *count){
   struct tm *prev = localtime(&prev_time);
   // tm_isdst returns -1 if information not available
+  // accounts for daylight saving
   if(prev->tm_isdst >= 0){
-    prev->tm_hour -= prev->tm_isdst;                                                     
+    prev->tm_hour -= prev->tm_isdst;
   }
 	// converts prev to minutes past midnight
-  (*sum) += prev->tm_hour * 60 + prev->tm_min; 
+  (*sum) += prev->tm_hour * 60 + prev->tm_min;
 	(*count)++;
 }
+
 void monitor_sleep_time(time_t current_time, battery_t *battery, FILE* analysis_file){
 
   // sum of 7 days previous sleep times stored in minutes past midnight
@@ -31,7 +34,7 @@ void monitor_sleep_time(time_t current_time, battery_t *battery, FILE* analysis_
   int number_of_sleeps = 0;
 
   char buff[MAX_LINE_SIZE + 1];
-  
+
   // stores time of previous line in csv file
   time_t prev_time = current_time;
 
@@ -65,36 +68,47 @@ void monitor_sleep_time(time_t current_time, battery_t *battery, FILE* analysis_
   }
 }
 
+void write_to_files(battery_t *battery, FILE* log_file, FILE* analysis_file, time_t current_time){
+  char state_string[MAX_LINE_SIZE];
+  state_to_string(battery->state, state_string);
+  struct tm *current = localtime(&current_time);
+  // tm_isdst returns -1 if information not available
+  // accounts for daylight saving
+  if(current->tm_isdst >= 0){
+    current->tm_hour -= current->tm_isdst;
+  }
+
+  // writes to text log
+  fprintf(log_file, "State: %s, Percentage: %d, Time: %s", state_string, battery->percentage, asctime(current));
+  // writes to csv log
+  fprintf(analysis_file, "%ld,%s,%d\n", current_time, state_string, battery->percentage);
+}
+
 void log_battery_info(battery_t *battery){
   FILE *log_file = fopen(BATTERY_LOG_PATH, "a");
   if(log_file == NULL){
     perror("Failed to open battery logfile");
     exit(EXIT_FAILURE);
   }
-  
+
   FILE *analysis_file = fopen(BATTERY_ANALYSIS_PATH, "a+");
   if(analysis_file == NULL){
     perror("Failed to open battery analysis file");
     exit(EXIT_FAILURE);
   }
-  char state_string[MAX_LINE_SIZE];
-  // converts enum into string representation
-  state_to_string(battery->state, state_string);
 
-  // calculates current time in second past 01/01/1970
+  // calculates current time in seconds past 01/01/1970
   time_t current_time = time(NULL);
 
-  fprintf(log_file, "State: %s, Percentage: %d, Time: %s", state_string, battery->percentage, ctime(&current_time));
+  monitor_sleep_time(current_time, battery, analysis_file);
 
-  monitor_sleep_time(current_time, battery, analysis_file); 
+  write_to_files(battery, log_file, analysis_file, current_time);
 
-  fprintf(analysis_file, "%ld,%s,%d\n", current_time, state_string, battery->percentage);
-  
   if(fclose(log_file) != 0){
     perror("Failed to close battery log file");
     exit(EXIT_FAILURE);
   }
-  
+
   if(fclose(analysis_file) != 0){
     perror("Failed to close battery analysis file");
     exit(EXIT_FAILURE);
