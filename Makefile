@@ -13,5 +13,5 @@ battery: $(OBJS)
 
 clean:
 	rm -f *.o $(TARGETS)
-	cd temp && rm *
+	cd temp && rm -f *
 
