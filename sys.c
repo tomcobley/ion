@@ -39,9 +39,8 @@ void read_battery_info(battery_t *battery, op_sys_t op_sys) {
     assert(0);
   }
 
-  // TODO: execute command based on operating system
   if (info_status != SYSTEM_SUCCESS) {
-    perror("Failed to execute upower command");
+    perror("Failed to execute BATTERY_INFO command");
     exit(EXIT_FAILURE);
   }
 
@@ -53,6 +52,7 @@ void read_battery_info(battery_t *battery, op_sys_t op_sys) {
 
   // TODO: check for EMPTY file (in case of no access to battery, test on lab machines)
   //    Note: if temp file did not exist before, no file will be created when there is no access to batt
+  //                    ^^ NOT SURE THIS IS ACTUALLY TRUE
 
   // TODO: use function pointer instead
   if (op_sys == LINUX) {
