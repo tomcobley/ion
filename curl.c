@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "./curl.h"
 
-CURLcode post_to_webhook(char* dest_url){
+CURLcode post_to_webhook(char *dest_url) {
 
   CURL *curl;
   CURLcode res_code;
@@ -12,7 +12,7 @@ CURLcode post_to_webhook(char* dest_url){
 
   // obtain curl handle
   curl = curl_easy_init();
-  if(curl != NULL) {
+  if (curl != NULL) {
     // set destination for curl
     curl_easy_setopt(curl, CURLOPT_URL, dest_url);
 
@@ -22,7 +22,7 @@ CURLcode post_to_webhook(char* dest_url){
     printf("\n");
 
     // checks for errors
-    if(res_code != CURLE_OK)
+    if (res_code != CURLE_OK)
       fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res_code));
 
     // frees curl handle created by curl_easy_init

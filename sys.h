@@ -5,8 +5,8 @@
 #include "batterystate.h"
 
 typedef enum op_sys {
-  LINUX,
-  MACOS
+    LINUX,
+    MACOS
 } op_sys_t;
 
 
