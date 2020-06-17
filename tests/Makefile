@@ -9,9 +9,9 @@ all: $(BUILD)
 
 runtests: all
 	./testreading
-	./testanalysis 
+	./testanalysis
 	./testwriting
-testreading: testreading.c $(COMMON) 
+testreading: testreading.c $(COMMON)
 
 testanalysis: testanalysis.c $(COMMON)
 
@@ -23,4 +23,3 @@ clean:
 	rm -f testanalysis
 	rm -f testwriting
 	cd ./temp && rm -f *
-

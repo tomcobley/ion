@@ -20,10 +20,10 @@ static void update_sleep_count(time_t prev_time, int *sum, int *count){
   // tm_isdst returns -1 if information not available
   // accounts for daylight saving
   if(prev->tm_isdst >= 0){
-    prev->tm_hour -= prev->tm_isdst;                                                     
+    prev->tm_hour -= prev->tm_isdst;
   }
 	// converts prev to minutes past midnight
-  (*sum) += prev->tm_hour * 60 + prev->tm_min; 
+  (*sum) += prev->tm_hour * 60 + prev->tm_min;
 	(*count)++;
 }
 
@@ -34,7 +34,7 @@ void monitor_sleep_time(time_t current_time, battery_t *battery, FILE* analysis_
   int number_of_sleeps = 0;
 
   char buff[MAX_LINE_SIZE + 1];
-  
+
   // stores time of previous line in csv file
   time_t prev_time = current_time;
 
@@ -75,9 +75,9 @@ void write_to_files(battery_t *battery, FILE* log_file, FILE* analysis_file, tim
   // tm_isdst returns -1 if information not available
   // accounts for daylight saving
   if(current->tm_isdst >= 0){
-    current->tm_hour -= current->tm_isdst;                                                     
+    current->tm_hour -= current->tm_isdst;
   }
-  
+
   // writes to text log
   fprintf(log_file, "State: %s, Percentage: %d, Time: %s", state_string, battery->percentage, asctime(current));
   // writes to csv log
@@ -90,7 +90,7 @@ void log_battery_info(battery_t *battery){
     perror("Failed to open battery logfile");
     exit(EXIT_FAILURE);
   }
-  
+
   FILE *analysis_file = fopen(BATTERY_ANALYSIS_PATH, "a+");
   if(analysis_file == NULL){
     perror("Failed to open battery analysis file");
@@ -100,15 +100,15 @@ void log_battery_info(battery_t *battery){
   // calculates current time in seconds past 01/01/1970
   time_t current_time = time(NULL);
 
-  monitor_sleep_time(current_time, battery, analysis_file); 
+  monitor_sleep_time(current_time, battery, analysis_file);
 
   write_to_files(battery, log_file, analysis_file, current_time);
-   
+
   if(fclose(log_file) != 0){
     perror("Failed to close battery log file");
     exit(EXIT_FAILURE);
   }
-  
+
   if(fclose(analysis_file) != 0){
     perror("Failed to close battery analysis file");
     exit(EXIT_FAILURE);
