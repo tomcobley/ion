@@ -59,7 +59,7 @@ void monitor_sleep_time(time_t current_time, battery_t *battery, FILE* analysis_
   if(number_of_sleeps > 0){
     int average_sleep_time = sum_sleep_time / number_of_sleeps;
     battery->data->average_sleep_time = average_sleep_time;
-    printf("Average sleep time = %d in minutes past midnight.\n",average_sleep_time);
+    //printf("Average sleep time = %d in minutes past midnight.\n",average_sleep_time);
     struct tm *current = localtime(&current_time);
     // checks if current time is within 30 minute window
     if(average_sleep_time - (current->tm_hour*60 + current->tm_min) < 30){
