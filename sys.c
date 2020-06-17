@@ -30,10 +30,14 @@ void read_battery_info(battery_t *battery, op_sys_t op_sys) {
 
   int info_status;
 
+  void (*read_battery_info__func)(battery_t *battery, FILE *batteryinfo);
+
   if (op_sys == LINUX) {
     info_status = system(BATTERY_INFO__LINUX);
+    read_battery_info__func = read_battery_info__ubuntu;
   } else if (op_sys == MACOS) {
     info_status = system(BATTERY_INFO__MACOS);
+    read_battery_info__func = read_battery_info__macos;
   } else {
     perror("Unsupported operating sytem.");
     exit(EXIT_FAILURE);
@@ -56,12 +60,7 @@ void read_battery_info(battery_t *battery, op_sys_t op_sys) {
     exit(EXIT_FAILURE);
   }
 
-  // TODO: use function pointer instead
-  if (op_sys == LINUX) {
-    read_battery_info__ubuntu(battery, batteryinfo);
-  } else if (op_sys == MACOS) {
-    read_battery_info__macos(battery, batteryinfo);
-  }
+  read_battery_info__func(battery, batteryinfo);
 
   if (fclose(batteryinfo) != 0) {
     perror("Failed to close battery information file");
