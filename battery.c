@@ -3,7 +3,6 @@
 #include <stdlib.h>
 
 #include "battery.h"
-#include "curl.h"
 #include "config.h"
 
 battery_t *alloc_battery(void){

@@ -6,7 +6,6 @@
 #include <stdint.h>
 #include "../battery.h"
 #include "../log.h"
-
 typedef struct {
   int successes;
   int failures;
@@ -17,6 +16,8 @@ bool check(bool truth_value, char test_name[], test_state *state);
 bool equal_int(int a, int b, char test_name[], test_state *state);
 
 bool equal_bool(bool a, bool b, char test_name[], test_state *state);
+
+bool equal_res(CURLcode a, CURLcode b, char test_name[], test_state *state);
 
 bool equal_battery(battery_t *battery, int percentage, state_t battery_state, char test_name[], test_state* state);
 

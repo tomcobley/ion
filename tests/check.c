@@ -33,7 +33,17 @@ bool equal_int(int a, int b, char test_name[], test_state *state) {
     printf("                         b = %u  [hex: 0x%x]\n", b, b);
   }  
   return success;
-} 
+}
+
+bool equal_res(CURLcode a, CURLcode b, char test_name[], test_state *state){
+  bool success = check( a == b, test_name, state);
+  if (!success) {
+    printf("            EXPECTED a == b\n");
+    printf("                     BUT a = %u  [hex: 0x%x]\n", a, a);
+    printf("                         b = %u  [hex: 0x%x]\n", b, b);
+  }  
+  return success; 
+}
 
 bool equal_battery(battery_t *battery, int percentage, state_t battery_state, char test_name[], test_state *state) {
   bool success = check( battery->percentage == percentage && battery->state == battery_state, test_name, state);

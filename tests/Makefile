@@ -1,7 +1,7 @@
 CC      = gcc
-CFLAGS  = -Wall -g -D_POSIX_SOURCE -std=c99 -Werror -pedantic -DDEBUG
-BUILD   = testreading testanalysis testwriting
-COMMON  = ../battery.c check.c ../log.c ../sys.c
+CFLAGS  = -Wall -g -std=c99 -pedantic -DDEBUG
+BUILD   = testreading testanalysis testwriting testwebhook
+COMMON  = ../battery.c check.c ../log.c ../sys.c ../curl.c
 
 .PHONY: all clean runtests
 
@@ -11,15 +11,16 @@ runtests: all
 	./testreading
 	./testanalysis
 	./testwriting
+	./testwebhook
 testreading: testreading.c $(COMMON)
 
 testanalysis: testanalysis.c $(COMMON)
 
 testwriting: testwriting.c $(COMMON)
 
+testwebhook: testwebhook.c $(COMMON)
+
 clean:
 	rm -f *.o
-	rm -f testreading
-	rm -f testanalysis
-	rm -f testwriting
+	rm -f $(BUILD)
 	cd ./temp && rm -f *

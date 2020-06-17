@@ -3,6 +3,7 @@
 
 #include "sys.h"
 #include "log.h"
+#include "./curl.h"
 #define SYSTEM_SUCCESS (0)
 // TODO: change MAX_LINE_SIZE to something more meaningful
 #define MAX_LINE_SIZE (1023)

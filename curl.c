@@ -1,9 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <curl/curl.h>
 #include "./curl.h"
 
-void post_to_webhook(char* dest_url){
+CURLcode post_to_webhook(char* dest_url){
 
   CURL *curl;
   CURLcode res_code;
@@ -34,4 +33,5 @@ void post_to_webhook(char* dest_url){
   }
   // frees program environment created by curl_global_init
   curl_global_cleanup();
+  return res_code;
 }
