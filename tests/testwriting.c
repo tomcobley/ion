@@ -32,7 +32,7 @@ int main(void) {
   fclose(analysis_1);
 
   equal_file("./writing_tests/log_1.txt","./writing_tests/test_log_1.txt", "Text file correctly written to for linux 1", state);
-  equal_file("./writing_tests/analysis_1.csv", "./writing_tests/test_analysis_1.csv", "Csv file correctly written to for linux 1", state);
+  equal_file("./writing_tests/analysis_1.csv", "./writing_tests/test_analysis_1.csv", "CSV file correctly written to for linux 1", state);
   
   // TEST 2
   // 16 June 09.30, fully-charged, 100%
@@ -59,7 +59,7 @@ int main(void) {
   fclose(analysis_2);
 
   equal_file("./writing_tests/log_2.txt","./writing_tests/test_log_2.txt", "Text file correctly written to for linux 2", state);
-  equal_file("./writing_tests/analysis_2.csv", "./writing_tests/test_analysis_2.csv", "Csv file correctly written to for linux 2", state);
+  equal_file("./writing_tests/analysis_2.csv", "./writing_tests/test_analysis_2.csv", "CSV file correctly written to for linux 2", state);
   
   // TEST 3
   // 16 June 09.30, discharging, 25%
@@ -85,7 +85,7 @@ int main(void) {
   fclose(analysis_3);
 
   equal_file("./writing_tests/log_3.txt","./writing_tests/test_log_3.txt", "Text file correctly written to for linux 3", state);
-  equal_file("./writing_tests/analysis_3.csv", "./writing_tests/test_analysis_3.csv", "Csv file correctly written to for linux 3", state);
+  equal_file("./writing_tests/analysis_3.csv", "./writing_tests/test_analysis_3.csv", "CSV file correctly written to for linux 3", state);
   
   // TEST 4
   // 16 June 09.30, discharging, 100%
@@ -111,8 +111,8 @@ int main(void) {
   fclose(analysis_4);
 
   equal_file("./writing_tests/log_4.txt","./writing_tests/test_log_4.txt", "Text file correctly written to for linux 4", state);
-  equal_file("./writing_tests/analysis_4.csv", "./writing_tests/test_analysis_4.csv", "Csv file correctly written to for linux 4", state);
-  
+  equal_file("./writing_tests/analysis_4.csv", "./writing_tests/test_analysis_4.csv", "CSV file correctly written to for linux 4", state);
+
   // TEST 5
   // 16 June 09.30, charging, 21% 
   FILE *file_5 = fopen("./reading_tests/mac_charging_21.txt", "r");
@@ -137,7 +137,7 @@ int main(void) {
   fclose(analysis_5);
 
   equal_file("./writing_tests/log_5.txt","./writing_tests/test_log_5.txt", "Text file correctly written to for mac 1", state);
-  equal_file("./writing_tests/analysis_5.csv", "./writing_tests/test_analysis_5.csv", "Csv file correctly written to for mac 1", state);
+  equal_file("./writing_tests/analysis_5.csv", "./writing_tests/test_analysis_5.csv", "CSV file correctly written to for mac 1", state);
   
   // TEST 6
   // 16 June 09.30, charging, 55% 
@@ -163,7 +163,7 @@ int main(void) {
   fclose(analysis_6);
 
   equal_file("./writing_tests/log_6.txt","./writing_tests/test_log_6.txt", "Text file correctly written to for mac 2", state);
-  equal_file("./writing_tests/analysis_6.csv", "./writing_tests/test_analysis_6.csv", "Csv file correctly written to for mac 2", state);
+  equal_file("./writing_tests/analysis_6.csv", "./writing_tests/test_analysis_6.csv", "CSV file correctly written to for mac 2", state);
   
   // TEST 7
   // 16 June 09.30, discharing, 18% 
@@ -189,7 +189,7 @@ int main(void) {
   fclose(analysis_7);
 
   equal_file("./writing_tests/log_7.txt","./writing_tests/test_log_7.txt", "Text file correctly written to for mac 3", state);
-  equal_file("./writing_tests/analysis_7.csv", "./writing_tests/test_analysis_7.csv", "Csv file correctly written to for mac 3", state);
+  equal_file("./writing_tests/analysis_7.csv", "./writing_tests/test_analysis_7.csv", "CSV file correctly written to for mac 3", state);
   
   // TEST 8
   // 16 June 09.30, discharging, 83% 
@@ -215,7 +215,7 @@ int main(void) {
   fclose(analysis_8);
 
   equal_file("./writing_tests/log_8.txt","./writing_tests/test_log_8.txt", "Text file correctly written to for mac 4", state);
-  equal_file("./writing_tests/analysis_8.csv", "./writing_tests/test_analysis_8.csv", "Csv file correctly written to for mac 4", state);
+  equal_file("./writing_tests/analysis_8.csv", "./writing_tests/test_analysis_8.csv", "CSV file correctly written to for mac 4", state);
   
   // *************** END OF TESTS ***************
   free_battery(test_battery);

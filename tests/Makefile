@@ -1,7 +1,8 @@
 CC      = gcc
 CFLAGS  = -Wall -g -std=c99 -pedantic -DDEBUG
 BUILD   = testreading testanalysis testwriting testwebhook
-COMMON  = ../battery.c check.c ../log.c ../sys.c ../curl.c
+LIBS    = -lcurl
+COMMON  = ../battery.c check.c ../log.c ../sys.c
 
 .PHONY: all clean runtests
 
@@ -12,15 +13,17 @@ runtests: all
 	./testanalysis
 	./testwriting
 	./testwebhook
+
 testreading: testreading.c $(COMMON)
 
 testanalysis: testanalysis.c $(COMMON)
 
 testwriting: testwriting.c $(COMMON)
 
-testwebhook: testwebhook.c $(COMMON)
+testwebhook: testwebhook.c ../curl.c $(COMMON)
+	$(CC) $(CFLAGS) testwebhook.c ../curl.c $(COMMON) -o testwebhook $(LIBS)
 
 clean:
-	rm -f *.o
+	rm -f *.o *.out
 	rm -f $(BUILD)
 	cd ./temp && rm -f *
