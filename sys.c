@@ -54,13 +54,13 @@ void read_battery_info(battery_t *battery, op_sys_t op_sys) {
     exit(EXIT_FAILURE);
   }
 
+  read_battery_info__func(battery, batteryinfo);
+
   // if file is empty then device does not have battery/access to battery failed
   if (ftell(batteryinfo) == 0) {
     perror("Failed to access battery or device does not have a battery");
     exit(EXIT_FAILURE);
   }
-
-  read_battery_info__func(battery, batteryinfo);
 
   if (fclose(batteryinfo) != 0) {
     perror("Failed to close battery information file");
