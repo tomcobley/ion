@@ -226,13 +226,13 @@ static void get_config(config_t *config) {
     if (streq(key, "str_charge_low_webhook_url")) {
       update_config_option__str(
               config, key,
-              "Enter URL of webhook to be activated when battery charge reaches LOWER threshold",
+              "Enter URL of webhook to be activated when battery charge reaches LOWER bound",
               &config->str_charge_low_webhook_url
       );
     } else if (streq(key, "str_charge_high_webhook_url")) {
       update_config_option__str(
               config, key,
-              "Enter URL of webhook to be activated when battery charge reaches UPPER threshold",
+              "Enter URL of webhook to be activated when battery charge reaches UPPER bound",
               &config->str_charge_high_webhook_url
       );
     } else if (streq(key, "int_cycle_min_charge_percentage")) {

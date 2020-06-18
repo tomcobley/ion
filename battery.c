@@ -80,6 +80,8 @@ int main(int argc, char const *argv[]) {
   // determine battery percentage and state, save information to battery
   read_battery_info(battery, op_sys);
 
+  printf("\nCurrent state-of-charge: %d %% \n", battery->percentage);
+
   // log battery percentage and state for sleep time analysis
   log_battery_info(battery);
 
@@ -93,7 +95,7 @@ int main(int argc, char const *argv[]) {
     perror("Failed to delete contents of temp");
   }
 
-  printf("Exit Success.\n");
+  printf("\nExit Success.\n");
 
   return EXIT_SUCCESS;
 }
