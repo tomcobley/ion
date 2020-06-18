@@ -237,6 +237,7 @@ int main(void) {
   // *************** END OF TESTS ***************
   free_battery(test_battery);
 
-  printf("%d test(s) failed, %d test(s) passed\n\n", state->failures, state->successes);
+  printf("%d test(s) failed, %d test(s) passed\n", state->failures, state->successes);
+  printf("--------------------------------------------------------------------------------------------\n");
   return EXIT_SUCCESS;
 }
