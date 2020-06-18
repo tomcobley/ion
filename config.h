@@ -14,7 +14,7 @@
 #define CONFIG_FILE_PATH ("./.config")
 
 // system recommended defaults
-#define RECOMMENDED_MIN_CHARGE "25"
+#define RECOMMENDED_MIN_CHARGE "30"
 #define RECOMMENDED_MAX_CHARGE "75"
 
 // command used to perform initialisation
