@@ -1,12 +1,10 @@
 # ignore executable files
 battery
+main
 
 # ignore log files
-<<<<<<< HEAD
+log/
 batterylog.txt
 
 # ignore config file
 .config
-=======
-log/
->>>>>>> develop-extension

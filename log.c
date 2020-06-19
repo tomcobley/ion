@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "battery.h"
+#include "main.h"
 
 void state_to_string(state_t state, char *string) {
   switch (state) {

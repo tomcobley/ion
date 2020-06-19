@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "sys.h"
-#include "battery.h"
+#include "main.h"
 
 void read_battery_info__ubuntu(battery_t *battery, FILE *batteryinfo);
 

@@ -2,7 +2,7 @@ CC      = gcc
 CFLAGS  = -Wall -g -std=c99 -pedantic -DDEBUG
 BUILD   = testreading testanalysis testwriting testwebhook
 LIBS    = -lcurl
-COMMON  = ../battery.c check.c ../log.c ../sys.c
+COMMON  = ../main.c check.c ../log.c ../sys.c
 
 .PHONY: all clean runtests
 

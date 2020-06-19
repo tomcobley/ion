@@ -1,17 +1,16 @@
 CC 	= gcc
 CFLAGS  = -Wall -g -std=c99 -pedantic
 LIBS 	= -lcurl
-OBJS 	= curl.c sys.c log.c battery.c config.c
-TARGETS = battery
+OBJS 	= curl.c sys.c log.c main.c config.c
+TARGETS = main
 
 .PHONY = all clean
 
 all: $(TARGETS)
 
-battery: $(OBJS)
-	$(CC) $(OBJS) $(CFLAGS) -o battery $(LIBS)
+main: $(OBJS)
+	$(CC) $(OBJS) $(CFLAGS) -o main $(LIBS)
 
 clean:
 	rm -f *.o $(TARGETS)
 	cd temp && rm -f *
-

@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdint.h>
-#include "../battery.h"
+#include "../main.h"
 #include "../log.h"
 
 typedef struct {

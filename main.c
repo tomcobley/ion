@@ -2,7 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "battery.h"
+#include "main.h"
 #include "config.h"
 
 battery_t *alloc_battery(void) {
