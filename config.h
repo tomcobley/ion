@@ -18,7 +18,7 @@
 #define RECOMMENDED_MAX_CHARGE "75"
 
 // command used to perform initialisation
-#define INIT_COMMAND ("./battery init")
+#define INIT_COMMAND ("ion init")
 
 
 // Note: whenever a config option is added, code in this file and config.c must
