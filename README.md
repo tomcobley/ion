@@ -93,7 +93,14 @@ ___
 ```bash
  ion
  ```
-Test if the program is interfacing with the smart plug correctly by adjusting the lower and upper bounds so your current battery percentage is outside the range you specified.
+ You should also be able to run the test suite to check everything has been set up correctly. Try it with:
+```bash
+ cd tests
+ make runtests
+```
+It is specifically important that the webhook tests pass. Moreover, make sure that the plug turns ON and then OFF when the test is running. Otherwise, you may have configured your IFTTT tasks incorrectly.
+
+Also, feel free to test if the program is interfacing with the smart plug correctly by adjusting the lower and upper bounds so your current battery percentage is outside the range you specified.
 
 #### Cron
 Keep following the steps to get the program to run automatically rather than manually.

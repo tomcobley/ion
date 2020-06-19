@@ -20,8 +20,8 @@ testanalysis: testanalysis.c $(COMMON)
 
 testwriting: testwriting.c $(COMMON)
 
-testwebhook: testwebhook.c ../curl.c $(COMMON)
-	$(CC) $(CFLAGS) testwebhook.c ../curl.c $(COMMON) -o testwebhook $(LIBS)
+testwebhook: testwebhook.c ../curl.c ../config.c $(COMMON)
+	$(CC) $(CFLAGS) testwebhook.c ../curl.c ../config.c $(COMMON) -o testwebhook $(LIBS)
 
 clean:
 	rm -f *.o *.out
