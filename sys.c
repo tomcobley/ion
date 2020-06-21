@@ -170,7 +170,7 @@ void read_battery_info__macos(battery_t *battery, FILE *batteryinfo) {
   strcpy(status, skip_white_space(str_ptr));
 
   // initiliase battery struct using information from system
-  if (strcmp(status, "fully-charged") == 0 || strcmp(status, "charging") == 0) {
+  if (strcmp(status, "fully-charged") == 0 || strcmp(status, "charged") == 0 || strcmp(status, "charging") == 0) {
     update_battery(battery, CHARGING, percentage);
   } else {
     // battery is either "discharging" or "AC attached; not charging"
