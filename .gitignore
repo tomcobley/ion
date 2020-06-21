@@ -8,3 +8,5 @@ batterylog.txt
 
 # ignore config file
 .config
+
+*.dSYM
