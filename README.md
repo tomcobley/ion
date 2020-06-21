@@ -1,9 +1,9 @@
 # ion
 
 ## Look after your battery
-_ion_ is a command line program, used to interact with a smart plug to easily control your battery's charge cycles. Research shows that cycling your batteries charge level between 30% and 75% (rather than 0%-100%) can greatly extend its service life, which is good for you and the environment.
+_ion_ is a command line program, used to interact with a smart plug to easily control your battery's charge cycles. Research shows that cycling your batteries charge level between 30% and 75% (rather than 0%-100%) can greatly extend its service life, which is good for your wallet and for the environment.
 
-**Pull requests welcomed**, we'd love for you to get involved. Just submit a pull request or open an issue.
+**Contributions welcomed!** We'd love for you to get involved. Just submit a pull request or open an issue.
 
 ## Installation & Setup
 You will need a smart plug (any will do, as long as it's supported by [IFTTT](https://ifttt.com/discover/smart-plug-roundup).
