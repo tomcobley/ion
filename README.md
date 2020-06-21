@@ -20,7 +20,7 @@ You can install _ion_ wherever you like, but we recommend creating a new directo
  ```
 ... and install the repository with git (follow [these instructions](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) to install git if you don't have it):
 ```bash
- git clone TODO:ADD_URL
+ git clone https://github.com/tomcobley/ion
  ```
  This should have created a new directory within your current directory called `ion`. Navigate into it and take a look around with:
 ```bash
