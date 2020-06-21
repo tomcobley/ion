@@ -7,7 +7,7 @@ _ion_ is a command line program, used to interact with a smart plug to easily co
 
 ## Installation & Setup
 You will need a smart plug (any will do, as long as it's supported by [IFTTT](https://ifttt.com/discover/smart-plug-roundup).
-(Note: if your smart plug is not supported by IFTTT you may still be able to use our software to activate/deactivate it, but this isn't covered in this guide)
+(Note: if your smart plug is not supported by IFTTT you may still be able to use our software to activate/deactivate it, but this isn't covered in this guide)).
 
 ### Installation
 You can install _ion_ wherever you like, but we recommend creating a new directory for it in your home folder. To do so, type the following command into your terminal or command prompt:
