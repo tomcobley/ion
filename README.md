@@ -1,4 +1,5 @@
 # ion
+An IoT solution for extending your laptop battery's life.
 
 ## Look after your battery
 _ion_ is a command line program, used to interact with a smart plug to easily control your battery's charge cycles. Research shows that cycling your batteries charge level between 30% and 75% (rather than 0%-100%) can greatly extend its service life, which is good for your wallet and for the environment.
