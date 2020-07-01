@@ -47,6 +47,13 @@ static void monitor_battery(battery_t *battery, config_t *config) {
 
 int main(int argc, char const *argv[]) {
 
+  // determine the host operating system
+  op_sys_t op_sys = determine_os();
+
+  // determine root of codebase, used for accessing files in an absolute manner
+  //    regardless of working directory / location of codebase
+  determine_root_path(op_sys);
+
   if (argc > 1 && strcmp(argv[1], "init") == 0) {
     // call init method from config.c
     init();
@@ -74,8 +81,6 @@ int main(int argc, char const *argv[]) {
   // allocate memory for the battery struct
   battery_t *battery = alloc_battery();
 
-  // determine the running operating system using compiler flags
-  op_sys_t op_sys = determine_os();
 
   // determine battery percentage and state, save information to battery
   read_battery_info(battery, op_sys);

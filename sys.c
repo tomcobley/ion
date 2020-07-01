@@ -2,6 +2,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <unistd.h>
+#include <libproc.h>
 #include "sys.h"
 #include "main.h"
 
@@ -24,6 +26,30 @@ op_sys_t determine_os(void) {
   perror("Unsupported operating system.");
   exit(EXIT_FAILURE);
 #endif
+}
+
+char *determine_root_path(op_sys_t op_sys) {
+  // determine the absolute path of the codebase's root
+  char buff[MAX_BUFFER_SIZE];
+  ssize_t sz;
+
+  if (op_sys == LINUX) {
+    sz = readlink("/proc/self/exe", buff, sizeof(buff));
+  } else if (op_sys == MACOS) {
+    sz = proc_pidpath(getpid(), buff, sizeof(buff));
+  } else {
+    perror("Unexpected operating system.");
+    exit(EXIT_FAILURE);
+  }
+
+  // Find final directory separator of path
+  while (sz > 0 && buff[sz-1] != '/') {
+     --sz;
+   }
+  // Truncate string to directory name only, and print.
+  buff[sz] = '\0';
+  printf("[%s]\n", buff);
+
 }
 
 void read_battery_info(battery_t *battery, op_sys_t op_sys) {
