@@ -45,11 +45,14 @@ static void monitor_battery(battery_t *battery, config_t *config) {
   }
 }
 
+
 int main(int argc, char const *argv[]) {
 
-  // determine root of codebase, used for accessing files in an absolute manner
-  //    regardless of working directory / location of codebase
-  char *root_path = determine_root_path();
+  // set the working directory to the root directory of the codebase
+  //    (determined by evaluating the location of the current process, and
+  //     assuming that process (aka the result of compiling this code)
+  //     resides in said root directory)
+  set_working_dir();
 
   if (argc > 1 && strcmp(argv[1], "init") == 0) {
     // call init method from config.c
@@ -94,9 +97,6 @@ int main(int argc, char const *argv[]) {
 
   // free memory assigned to battery struct
   free_battery(battery);
-
-  // free string storing root of codebase 
-  free(root_path);
 
   if (system(DELETE_TEMP_CONTENTS) != SYSTEM_SUCCESS) {
     perror("Failed to delete contents of temp");

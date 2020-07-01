@@ -7,13 +7,52 @@
 #include "main.h"
 
 #if __APPLE__
-  // required for determine_root_path (apple only)
+  // required for determining root path (apple only)
   #include <libproc.h>
 #endif
 
 void read_battery_info__ubuntu(battery_t *battery, FILE *batteryinfo);
 
 void read_battery_info__macos(battery_t *battery, FILE *batteryinfo);
+
+
+
+// function to change the working directory to that of the codebase's root
+//  (useful for later file writing with relative paths)
+void set_working_dir(void) {
+  // determine the absolute path of the codebase's root
+  char *path_buffer = malloc(MAX_BUFFER_SIZE);
+  ssize_t sz;
+
+  // determine path of current process (dependent on OS)
+  #if __APPLE__
+    sz = proc_pidpath(getpid(), path_buffer, MAX_BUFFER_SIZE);
+  #elif __linux__
+    sz = readlink("/proc/self/exe", path_buffer, MAX_BUFFER_SIZE);
+  #else
+    perror("Unsupported operating system.");
+    exit(EXIT_FAILURE);
+  #endif
+
+  printf("[%s]\n", path_buffer);
+
+  // Find final directory separator of path
+  while (sz > 0 && path_buffer[sz-1] != '/') { --sz; }
+  // Truncate string to directory name only
+  path_buffer[sz] = '\0';
+
+  // change directory to path
+  if (chdir(path_buffer) != 0) {
+    perror("Failed to change working directory to codebase root");
+    exit(EXIT_FAILURE);
+  }
+
+  printf("[%s]\n", path_buffer);
+
+  // printing current working directory
+  char s[100];
+  printf("wd = %s\n", getcwd(s, 100));
+}
 
 
 op_sys_t determine_os(void) {
@@ -32,33 +71,6 @@ op_sys_t determine_os(void) {
 #endif
 }
 
-char *determine_root_path(void) {
-  // determine the absolute path of the codebase's root
-  char *buff = malloc(MAX_BUFFER_SIZE);
-  ssize_t sz;
-  
-  // determine path of current process (dependent on OS)
-  #if __APPLE__
-    sz = proc_pidpath(getpid(), buff, MAX_BUFFER_SIZE);
-  #elif __linux__
-    sz = readlink("/proc/self/exe", buff, MAX_BUFFER_SIZE);
-  #else
-    perror("Unsupported operating system.");
-    exit(EXIT_FAILURE);
-  #endif
-
-  printf("[%s]\n", buff);
-
-  // Find final directory separator of path
-  while (sz > 0 && buff[sz-1] != '/') {
-     --sz;
-   }
-  // Truncate string to directory name only, and print.
-  buff[sz] = '\0';
-  printf("[%s]\n", buff);
-
-  return buff;
-}
 
 void read_battery_info(battery_t *battery, op_sys_t op_sys) {
 
