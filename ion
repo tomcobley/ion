@@ -1,0 +1,3 @@
+#!/bin/bash
+# Call main executable (propagate all arguments)
+./main "$@"
