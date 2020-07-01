@@ -45,7 +45,14 @@ static void monitor_battery(battery_t *battery, config_t *config) {
   }
 }
 
+
 int main(int argc, char const *argv[]) {
+
+  // set the working directory to the root directory of the codebase
+  //    (determined by evaluating the location of the current process, and
+  //     assuming that process (aka the result of compiling this code)
+  //     resides in said root directory)
+  set_working_dir();
 
   if (argc > 1 && strcmp(argv[1], "init") == 0) {
     // call init method from config.c
@@ -74,7 +81,7 @@ int main(int argc, char const *argv[]) {
   // allocate memory for the battery struct
   battery_t *battery = alloc_battery();
 
-  // determine the running operating system using compiler flags
+  // determine the host operating system
   op_sys_t op_sys = determine_os();
 
   // determine battery percentage and state, save information to battery

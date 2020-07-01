@@ -6,7 +6,7 @@
 #include "./curl.h"
 
 #define SYSTEM_SUCCESS (0)
-#define MAX_BUFFER_SIZE (1023)
+#define MAX_BUFFER_SIZE (2042)
 
 
 #define BATTERY_INFO__MACOS ("pmset -g batt > ./temp/batteryinfo.txt")

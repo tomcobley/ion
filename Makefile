@@ -9,8 +9,8 @@ TARGETS = main
 all: $(TARGETS)
 
 main: $(OBJS)
-	$(CC) $(OBJS) $(CFLAGS) -o main $(LIBS)
+	$(CC) $(OBJS) $(CFLAGS) -o ion $(LIBS)
 
 clean:
-	rm -f *.o $(TARGETS)
+	rm -f *.o $(TARGETS) ion
 	cd temp && rm -f *

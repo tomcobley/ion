@@ -1,6 +1,7 @@
 # ignore executable files
 battery
 main
+ion
 
 # ignore log files
 log/
