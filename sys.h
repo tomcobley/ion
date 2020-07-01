@@ -12,7 +12,7 @@ typedef enum op_sys {
 
 op_sys_t determine_os(void);
 
-char *determine_root_path(op_sys_t op_sys);
+char *determine_root_path(void);
 
 void read_battery_info(battery_t *battery, op_sys_t op_sys);
 

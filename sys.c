@@ -32,19 +32,22 @@ op_sys_t determine_os(void) {
 #endif
 }
 
-char *determine_root_path(op_sys_t op_sys) {
+char *determine_root_path(void) {
   // determine the absolute path of the codebase's root
-  char buff[MAX_BUFFER_SIZE];
+  char *buff = malloc(MAX_BUFFER_SIZE);
   ssize_t sz;
-
-  if (op_sys == LINUX) {
-    sz = readlink("/proc/self/exe", buff, sizeof(buff));
-  } else if (op_sys == MACOS) {
-    sz = proc_pidpath(getpid(), buff, sizeof(buff));
-  } else {
-    perror("Unexpected operating system.");
+  
+  // determine path of current process (dependent on OS)
+  #if __APPLE__
+    sz = proc_pidpath(getpid(), buff, MAX_BUFFER_SIZE);
+  #elif __linux__
+    sz = readlink("/proc/self/exe", buff, MAX_BUFFER_SIZE);
+  #else
+    perror("Unsupported operating system.");
     exit(EXIT_FAILURE);
-  }
+  #endif
+
+  printf("[%s]\n", buff);
 
   // Find final directory separator of path
   while (sz > 0 && buff[sz-1] != '/') {
@@ -54,6 +57,7 @@ char *determine_root_path(op_sys_t op_sys) {
   buff[sz] = '\0';
   printf("[%s]\n", buff);
 
+  return buff;
 }
 
 void read_battery_info(battery_t *battery, op_sys_t op_sys) {
