@@ -3,9 +3,13 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <unistd.h>
-#include <libproc.h>
 #include "sys.h"
 #include "main.h"
+
+#if __APPLE__
+  // required for determine_root_path (apple only)
+  #include <libproc.h>
+#endif
 
 void read_battery_info__ubuntu(battery_t *battery, FILE *batteryinfo);
 
