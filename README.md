@@ -125,3 +125,4 @@ That's it! The program should now keep your laptop battery within the range you 
 ## Authors
 
 _ion_ was developed by Tom Cobley, Andrew Elkadi, Dimitri Chamay and Nicholas Duer.
+
