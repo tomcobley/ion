@@ -9,7 +9,7 @@ ION_ROOT=$(pwd)
 cp ./assets/ion-shell $ION_DEST
 
 # build shell script using dynamically generated path
-echo "cd $ION_ROOT && ./main \$1" >> $ION_DEST
+echo "cd $ION_ROOT && ./ion \$1" >> $ION_DEST
 # give the new script executable permissions
 chmod 755 $ION_DEST
 
